@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>MPPOP - Inicio</title>
+    <link rel="stylesheet" href="css/comun.css">
+</head>
+<body>
+    <!-- BARRA SUPERIOR -->
+    <header class="barra-mppop">
+        <img src="https://images.seeklogo.com/logo-png/53/1/mppop-logo-png_seeklogo-537041.png" 
+             alt="MPPOP" class="logo-mppop">
+        
+        <div class="botones-superiores">
+            <button class="btn-superior" onclick="location.href='vis_registro.html'">
+                Registrarse
+            </button>
+            <button class="btn-superior" onclick="location.href='vis_inicioSesion.html'">
+                Iniciar Sesión
+            </button>
+        </div>
+    </header>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="contenedor">
+        <h1 class="titulo-pagina">Crear solicitud de soporte</h1>
+        
+        <div style="background: white; padding: 20px; border-radius: 8px; max-width: 500px; margin: 0 auto;">
+            <form onsubmit="crearTicket(event)">
+                <!-- Nombre -->
+                <label style="display: block; margin: 10px 0 5px;">Nombre completo</label>
+                <input type="text" class="input-mppop" required>
+                
+                <!-- Departamento -->
+                <label style="display: block; margin: 10px 0 5px;">Departamento</label>
+                <select class="select-mppop" required>
+                    <option value="">Seleccionar</option>
+                    <option>Atención al ciudadano</option>
+                    <option>Auditoria Interna</option>
+                    <option>Consultoria Jurídica</option>
+                    <option>Dir. General de Despacho</option>
+                    <option>Estrategia de Seguimiento y Evaluación de Políticas Públicas</option>
+                    <option>Gestión Comunicacional</option>
+                    <option>Gestión Humana</option>
+                    <option>Planificación y Presupuesto</option>
+                    <option>Recursos Humanos</option>
+                    <option>Tecnología de la Información y Comunicación</option>
+                    <option>Vic. de Normativa y Políticas de Gestión</option>
+                    <option>Vic. de Planificación de Obras públicas</option>
+                    <option>Vic. de Fiscalización de Obras públicas</option>
+                    <option>Otro (Indicar piso/oficina en el "Asunto")</option>
+                </select>
+                
+                <!-- Asunto -->
+                <label style="display: block; margin: 10px 0 5px;">Asunto</label>
+                <input type="text" class="input-mppop" required>
+                
+                <!-- Botón -->
+                <button type="submit" 
+                        style="background: #007BFF; color: white; padding: 10px; border: none; border-radius: 4px; width: 100%; margin-top: 20px; cursor: pointer;">
+                    Enviar solicitud
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function crearTicket(event) {
+            event.preventDefault();
+            alert('Ticket creado. Pronto le contactaremos.');
+            // Limpiar formulario
+            event.target.reset();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - MPPOP</title>
+    <!-- SOLO ESTE CSS PARA TODAS LAS VISTAS -->
+    <link rel="stylesheet" href="css/comun.css">
+</head>
+<body>
+    <!-- BARRA SUPERIOR (REUTILIZABLE) -->
+    <header class="barra-mppop">
+        <img src="https://images.seeklogo.com/logo-png/53/1/mppop-logo-png_seeklogo-537041.png" 
+             alt="MPPOP" class="logo-mppop">
+        
+        <div class="botones-superiores">
+            <span style="padding: 8px 15px; color: #2C3E50; font-weight: bold;">
+                Usuario Actual
+            </span>
+            <button class="btn-superior" onclick="alert('Tickets activos')">
+                📋 Tickets
+            </button>
+            <button class="btn-superior" onclick="alert('Historial')">
+                📊 Historial
+            </button>
+            <button class="btn-superior" onclick="location.href='vis_inicioSesion.html'">
+                🚪 Cerrar Sesión
+            </button>
+        </div>
+    </header>
+
+    <!-- CONTENIDO ESPECÍFICO DE ESTA VISTA -->
+    <div class="contenedor">
+        <h1 class="titulo-pagina">Gestión de Tickets</h1>
+        
+        <table class="tabla-mppop">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Asunto</th>
+                    <th>Prioridad</th>
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                    <th>Técnico</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tablaTickets">
+                <!-- Se llena con JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- MODAL (REUTILIZABLE) -->
+    <div id="modalAsignar" class="modal-mppop">
+        <div class="modal-contenido">
+            <h3>Asignar Ticket</h3>
+            <p>ID: <span id="ticketId"></span></p>
+            
+            <label>Prioridad:</label>
+            <select id="prioridad" class="select-mppop">
+                <option value="">Seleccionar</option>
+                <option value="alta">Alta</option>
+                <option value="media">Media</option>
+                <option value="baja">Baja</option>
+            </select>
+            
+            <label>Técnico:</label>
+            <select id="tecnico" class="select-mppop">
+                <option value="">Seleccionar</option>
+                <option value="1">Juan Pérez</option>
+                <option value="2">María González</option>
+            </select>
+            
+            <div style="margin-top: 20px; text-align: right;">
+                <button onclick="guardarAsignacion()" 
+                        style="background: #007BFF; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">
+                    Guardar
+                </button>
+                <button onclick="cerrarModal()" 
+                        style="background: #f5f5f5; padding: 10px 20px; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; margin-left: 10px;">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript ESPECÍFICO para tickets -->
+    <script src="../controlador/js/tickets.js"></script>
+</body>
+</html>
