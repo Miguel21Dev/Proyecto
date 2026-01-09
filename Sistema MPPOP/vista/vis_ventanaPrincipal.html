@@ -26,14 +26,14 @@
         <h1 class="titulo-pagina">Crear solicitud de soporte</h1>
         
         <div style="background: white; padding: 20px; border-radius: 8px; max-width: 500px; margin: 0 auto;">
-            <form onsubmit="crearTicket(event)">
+            <form id="form-ticket">
                 <!-- Nombre -->
                 <label style="display: block; margin: 10px 0 5px;">Nombre completo</label>
-                <input type="text" class="input-mppop" required>
-                
+                <input type="text" name="nombre" id="nombre" class="input-mppop" required>
+
                 <!-- Departamento -->
                 <label style="display: block; margin: 10px 0 5px;">Departamento</label>
-                <select class="select-mppop" required>
+                <select name="departamento" id="departamento" class="select-mppop" required>
                     <option value="">Seleccionar</option>
                     <option>Atención al ciudadano</option>
                     <option>Auditoria Interna</option>
@@ -50,13 +50,13 @@
                     <option>Vic. de Fiscalización de Obras públicas</option>
                     <option>Otro (Indicar piso/oficina en el "Asunto")</option>
                 </select>
-                
+
                 <!-- Asunto -->
                 <label style="display: block; margin: 10px 0 5px;">Asunto</label>
-                <input type="text" class="input-mppop" required>
-                
+                <input type="text" name="asunto" id="asunto" class="input-mppop" required>
+
                 <!-- Botón -->
-                <button type="submit" 
+                <button type="submit"
                         style="background: #007BFF; color: white; padding: 10px; border: none; border-radius: 4px; width: 100%; margin-top: 20px; cursor: pointer;">
                     Enviar solicitud
                 </button>
@@ -65,12 +65,59 @@
     </div>
 
     <script>
-        function crearTicket(event) {
-            event.preventDefault();
-            alert('Ticket creado. Pronto le contactaremos.');
-            // Limpiar formulario
-            event.target.reset();
-        }
+        document.getElementById('form-ticket').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const nombre = document.getElementById('nombre').value.trim();
+            const departamento = document.getElementById('departamento').value;
+            const asunto = document.getElementById('asunto').value.trim();
+
+            if (!nombre || !departamento || !asunto) {
+                alert('Por favor complete todos los campos.');
+                return;
+            }
+
+            // Enviar como application/x-www-form-urlencoded para que express.urlencoded lo parsee
+            const params = new URLSearchParams();
+            params.append('accion', 'crear');
+            params.append('nombre', nombre);
+            params.append('departamento', departamento);
+            params.append('asunto', asunto);
+
+            try {
+                const resp = await fetch('controlador/php/tickets.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: params.toString()
+                });
+
+                if (!resp.ok) {
+                    const txt = await resp.text().catch(() => '');
+                    alert('Error del servidor: ' + resp.status + ' ' + txt);
+                    return;
+                }
+
+                let data;
+                try {
+                    data = await resp.json();
+                } catch (e) {
+                    const txt = await resp.text().catch(() => '');
+                    alert('Respuesta inválida del servidor: ' + txt);
+                    return;
+                }
+
+                if (data.success) {
+                    alert('Ticket creado: ' + (data.ticket_id || data.data?.id || '') + '\n' + data.message);
+                    this.reset();
+                } else {
+                    alert('Error: ' + (data.message || 'No se pudo crear el ticket'));
+                }
+
+            } catch (err) {
+                console.error(err);
+                alert('Error de red al conectar con el servidor.');
+            }
+        });
     </script>
 </body>
 </html>

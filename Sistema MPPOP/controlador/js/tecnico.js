@@ -1,10 +1,41 @@
+// tecnico.js - Versión con PHP/PostgreSQL
 // TICKETS ASIGNADOS AL TÉCNICO ACTUAL
-let ticketsTecnico = [
-    {id:"TCK-001", asunto:"Error en sistema", prioridad:"alta", fecha:"15/12/2024", estado:"activo", tecnico:"Juan Pérez"},
-    {id:"TCK-002", asunto:"Solicitud acceso", prioridad:"media", fecha:"14/12/2024", estado:"en proceso", tecnico:"Juan Pérez"}
-];
 
-function cargarTicketsTecnico() {
+let ticketsTecnico = [];
+const tecnicoActual = "Juan Pérez"; // Esto debería venir de la sesión
+
+// Cargar tickets asignados al técnico
+async function cargarTicketsTecnico() {
+    const tbody = document.getElementById('tablaTicketsTecnico');
+    if (!tbody) return;
+    
+    try {
+        const formData = new FormData();
+        formData.append('accion', 'obtener_tecnico');
+        formData.append('tecnico', tecnicoActual);
+        
+        const response = await fetch('tickets_api.php', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const resultado = await response.json();
+        
+        if (resultado.success) {
+            ticketsTecnico = resultado.tickets;
+            actualizarTablaTecnico();
+        } else {
+            console.error('Error al cargar tickets:', resultado.message);
+            // Mostrar datos de ejemplo si hay error
+            mostrarDatosEjemploTecnico();
+        }
+    } catch (error) {
+        console.error('Error de conexión:', error);
+        mostrarDatosEjemploTecnico();
+    }
+}
+
+function actualizarTablaTecnico() {
     const tbody = document.getElementById('tablaTicketsTecnico');
     if (!tbody) return;
     
@@ -18,9 +49,10 @@ function cargarTicketsTecnico() {
             <select class="select-mppop select-estado" 
                     onchange="cambiarEstado('${ticket.id}', this.value)"
                     style="width: 120px; padding: 5px;">
-                <option value="activo" ${ticket.estado === 'activo' ? 'selected' : ''}>Activo</option>
-                <option value="en proceso" ${ticket.estado === 'en proceso' ? 'selected' : ''}>En proceso</option>
-                <option value="finalizado" ${ticket.estado === 'finalizado' ? 'selected' : ''}>Finalizado</option>
+                <option value="Abierto" ${ticket.estado === 'Abierto' ? 'selected' : ''}>Abierto</option>
+                <option value="Activo" ${ticket.estado === 'Activo' ? 'selected' : ''}>Activo</option>
+                <option value="En proceso" ${ticket.estado === 'En proceso' ? 'selected' : ''}>En proceso</option>
+                <option value="Finalizado" ${ticket.estado === 'Finalizado' ? 'selected' : ''}>Finalizado</option>
             </select>
         `;
         
@@ -33,39 +65,175 @@ function cargarTicketsTecnico() {
             <td>
                 <button class="btn-accion btn-ver" onclick="verDetalles('${ticket.id}')">👁️</button>
                 <button class="btn-accion" onclick="tomarTicket('${ticket.id}')" 
-                        style="background: #e0f7fa; color: #0097a7;">
-                    ✅ Tomar
+                        style="background: #e0f7fa; color: #0097a7;"
+                        ${ticket.estado === 'En proceso' ? 'disabled' : ''}>
+                    ${ticket.estado === 'En proceso' ? '✅ En proceso' : '✅ Tomar'}
                 </button>
             </td>
         `;
     });
 }
 
-function cambiarEstado(ticketId, nuevoEstado) {
-    const ticket = ticketsTecnico.find(t => t.id === ticketId);
-    if (ticket) {
-        ticket.estado = nuevoEstado;
-        console.log(`Ticket ${ticketId} cambiado a: ${nuevoEstado}`);
+function mostrarDatosEjemploTecnico() {
+    const tbody = document.getElementById('tablaTicketsTecnico');
+    if (!tbody) return;
+    
+    tbody.innerHTML = '';
+    
+    const datosEjemplo = [
+        {id:"TCK-001", asunto:"Error en sistema", prioridad:"alta", fecha:"15/12/2024", estado:"Activo", tecnico:"Juan Pérez"},
+        {id:"TCK-002", asunto:"Solicitud acceso", prioridad:"media", fecha:"14/12/2024", estado:"En proceso", tecnico:"Juan Pérez"}
+    ];
+    
+    datosEjemplo.forEach(ticket => {
+        const fila = tbody.insertRow();
         
-        // Aquí enviaríamos al servidor
-        // fetch(`/api/tickets/${ticketId}/estado`, {
-        //     method: 'PUT',
-        //     body: JSON.stringify({ estado: nuevoEstado })
-        // });
+        const selectEstado = `
+            <select class="select-mppop select-estado" 
+                    onchange="cambiarEstado('${ticket.id}', this.value)"
+                    style="width: 120px; padding: 5px;">
+                <option value="Abierto" ${ticket.estado === 'Abierto' ? 'selected' : ''}>Abierto</option>
+                <option value="Activo" ${ticket.estado === 'Activo' ? 'selected' : ''}>Activo</option>
+                <option value="En proceso" ${ticket.estado === 'En proceso' ? 'selected' : ''}>En proceso</option>
+                <option value="Finalizado" ${ticket.estado === 'Finalizado' ? 'selected' : ''}>Finalizado</option>
+            </select>
+        `;
+        
+        fila.innerHTML = `
+            <td>${ticket.id}</td>
+            <td>${ticket.asunto}</td>
+            <td><span class="badge badge-${ticket.prioridad}">${ticket.prioridad}</span></td>
+            <td>${ticket.fecha}</td>
+            <td>${selectEstado}</td>
+            <td>
+                <button class="btn-accion btn-ver" onclick="verDetalles('${ticket.id}')">👁️</button>
+                <button class="btn-accion" onclick="tomarTicket('${ticket.id}')" 
+                        style="background: #e0f7fa; color: #0097a7;"
+                        ${ticket.estado === 'En proceso' ? 'disabled' : ''}>
+                    ${ticket.estado === 'En proceso' ? '✅ En proceso' : '✅ Tomar'}
+                </button>
+            </td>
+        `;
+    });
+    
+    ticketsTecnico = datosEjemplo;
+}
+
+async function cambiarEstado(ticketId, nuevoEstado) {
+    try {
+        const formData = new FormData();
+        formData.append('accion', 'cambiar_estado');
+        formData.append('ticket_id', ticketId);
+        formData.append('estado', nuevoEstado);
+        formData.append('tecnico', tecnicoActual);
+        
+        const response = await fetch('tickets_api.php', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const resultado = await response.json();
+        
+        if (resultado.success) {
+            console.log(`Ticket ${ticketId} cambiado a: ${nuevoEstado}`);
+            
+            // Actualizar el ticket localmente
+            const ticket = ticketsTecnico.find(t => t.id === ticketId);
+            if (ticket) {
+                ticket.estado = nuevoEstado;
+            }
+            
+            // Recargar la tabla si es necesario
+            if (nuevoEstado === 'Finalizado') {
+                await cargarTicketsTecnico();
+            }
+        } else {
+            console.error('Error:', resultado.message);
+            alert('Error al cambiar estado: ' + resultado.message);
+            
+            // Revertir el cambio en el select
+            const select = document.querySelector(`select[onchange*="${ticketId}"]`);
+            if (select) {
+                const ticket = ticketsTecnico.find(t => t.id === ticketId);
+                if (ticket) {
+                    select.value = ticket.estado;
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error de conexión:', error);
+        
+        // Actualizar localmente si falla la conexión
+        const ticket = ticketsTecnico.find(t => t.id === ticketId);
+        if (ticket) {
+            ticket.estado = nuevoEstado;
+            console.log(`Ticket ${ticketId} cambiado localmente a: ${nuevoEstado}`);
+        }
     }
 }
 
-function tomarTicket(ticketId) {
+async function tomarTicket(ticketId) {
     if (confirm('¿Tomar este ticket?')) {
-        cambiarEstado(ticketId, 'en proceso');
-        alert(`Ticket ${ticketId} tomado`);
+        try {
+            const formData = new FormData();
+            formData.append('accion', 'tomar_ticket');
+            formData.append('ticket_id', ticketId);
+            formData.append('tecnico', tecnicoActual);
+            
+            const response = await fetch('tickets_api.php', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const resultado = await response.json();
+            
+            if (resultado.success) {
+                alert(`Ticket ${ticketId} tomado`);
+                await cargarTicketsTecnico();
+            } else {
+                alert('Error: ' + resultado.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            // Actualizar localmente
+            cambiarEstado(ticketId, 'En proceso');
+            alert(`Ticket ${ticketId} tomado (sin conexión al servidor)`);
+        }
     }
 }
 
-function verDetalles(ticketId) {
-    const ticket = ticketsTecnico.find(t => t.id === ticketId);
-    if (ticket) {
-        alert(`📋 Ticket: ${ticket.id}\n📝 Asunto: ${ticket.asunto}\n⚡ Prioridad: ${ticket.prioridad}\n📅 Fecha: ${ticket.fecha}\n🔄 Estado: ${ticket.estado}`);
+async function verDetalles(ticketId) {
+    try {
+        const formData = new FormData();
+        formData.append('accion', 'obtener');
+        formData.append('ticket_id', ticketId);
+        
+        const response = await fetch('tickets_api.php', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const resultado = await response.json();
+        
+        if (resultado.success) {
+            const ticket = resultado.ticket;
+            alert(`📋 Ticket: ${ticket.id}\n📝 Asunto: ${ticket.asunto}\n👤 Solicitante: ${ticket.nombre_completo}\n🏢 Departamento: ${ticket.departamento}\n⚡ Prioridad: ${ticket.prioridad}\n📅 Fecha: ${ticket.fecha}\n🔄 Estado: ${ticket.estado}\n🔧 Técnico: ${ticket.tecnico || 'No asignado'}`);
+        } else {
+            // Buscar en datos locales
+            const ticket = ticketsTecnico.find(t => t.id === ticketId);
+            if (ticket) {
+                alert(`📋 Ticket: ${ticket.id}\n📝 Asunto: ${ticket.asunto}\n⚡ Prioridad: ${ticket.prioridad}\n📅 Fecha: ${ticket.fecha}\n🔄 Estado: ${ticket.estado}`);
+            } else {
+                alert('Error: ' + resultado.message);
+            }
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        // Buscar en datos locales
+        const ticket = ticketsTecnico.find(t => t.id === ticketId);
+        if (ticket) {
+            alert(`📋 Ticket: ${ticket.id}\n📝 Asunto: ${ticket.asunto}\n⚡ Prioridad: ${ticket.prioridad}\n📅 Fecha: ${ticket.fecha}\n🔄 Estado: ${ticket.estado}`);
+        }
     }
 }
 

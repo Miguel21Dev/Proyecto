@@ -77,18 +77,25 @@
                     </div>
                 </div>
                 
-                <!-- Username generado (aparece automáticamente) -->
-                <div id="username-preview" class="username-generado" style="display: none;">
-                    <strong>✅ Tu nombre de usuario será:</strong>
-                    <div class="username-text" id="generatedUsername">
-                        <!-- Aquí aparecerá el username -->
+                <!-- Contenedor que muestra información tras el registro -->
+                <div id="userInfo" style="display: none;">
+                    <!-- Username generado (aparece automáticamente) -->
+                    <div id="username-preview" class="username-generado" style="display: none;">
+                        <strong>✅ Tu nombre de usuario será:</strong>
+                        <div class="username-text" id="generatedUsername">
+                            <!-- Aquí aparecerá el username -->
+                        </div>
+                        <small>Guarda este nombre de usuario para iniciar sesión</small>
                     </div>
-                    <small>Guarda este nombre de usuario para iniciar sesión</small>
                 </div>
+
+                <!-- Mensaje de estado / error -->
+                <div id="message" style="display: none; margin-top:10px;" class="mensaje-error"></div>
                 
                 <!-- Botón de registro -->
                 <button type="submit" id="submitBtn" class="btn-principal">
                     <span id="btnText">Registrarse</span>
+                    <span id="loader" class="loader" style="display:none"></span>
                 </button>
             </form>
             
@@ -101,6 +108,6 @@
     </div>
 
     <!-- JavaScript separado -->
-    <script src="../controlador/js/registro.js"></script>
+    <script src="/js/registro.js"></script>
 </body>
 </html>
