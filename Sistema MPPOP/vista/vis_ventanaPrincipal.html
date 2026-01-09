@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>MPPOP - Inicio</title>
+    <link rel="stylesheet" href="css/comun.css">
+</head>
+<body>
+    <!-- BARRA SUPERIOR -->
+    <header class="barra-mppop">
+        <img src="https://images.seeklogo.com/logo-png/53/1/mppop-logo-png_seeklogo-537041.png" 
+             alt="MPPOP" class="logo-mppop">
+        
+        <div class="botones-superiores">
+            <button class="btn-superior" onclick="location.href='vis_registro.html'">
+                Registrarse
+            </button>
+            <button class="btn-superior" onclick="location.href='vis_inicioSesion.html'">
+                Iniciar Sesión
+            </button>
+        </div>
+    </header>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="contenedor">
+        <h1 class="titulo-pagina">Crear solicitud de soporte</h1>
+        
+        <div style="background: white; padding: 20px; border-radius: 8px; max-width: 500px; margin: 0 auto;">
+            <form id="form-ticket">
+                <!-- Nombre -->
+                <label style="display: block; margin: 10px 0 5px;">Nombre completo</label>
+                <input type="text" name="nombre" id="nombre" class="input-mppop" required>
+
+                <!-- Departamento -->
+                <label style="display: block; margin: 10px 0 5px;">Departamento</label>
+                <select name="departamento" id="departamento" class="select-mppop" required>
+                    <option value="">Seleccionar</option>
+                    <option>Atención al ciudadano</option>
+                    <option>Auditoria Interna</option>
+                    <option>Consultoria Jurídica</option>
+                    <option>Dir. General de Despacho</option>
+                    <option>Estrategia de Seguimiento y Evaluación de Políticas Públicas</option>
+                    <option>Gestión Comunicacional</option>
+                    <option>Gestión Humana</option>
+                    <option>Planificación y Presupuesto</option>
+                    <option>Recursos Humanos</option>
+                    <option>Tecnología de la Información y Comunicación</option>
+                    <option>Vic. de Normativa y Políticas de Gestión</option>
+                    <option>Vic. de Planificación de Obras públicas</option>
+                    <option>Vic. de Fiscalización de Obras públicas</option>
+                    <option>Otro (Indicar piso/oficina en el "Asunto")</option>
+                </select>
+
+                <!-- Asunto -->
+                <label style="display: block; margin: 10px 0 5px;">Asunto</label>
+                <input type="text" name="asunto" id="asunto" class="input-mppop" required>
+
+                <!-- Botón -->
+                <button type="submit"
+                        style="background: #007BFF; color: white; padding: 10px; border: none; border-radius: 4px; width: 100%; margin-top: 20px; cursor: pointer;">
+                    Enviar solicitud
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('form-ticket').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const nombre = document.getElementById('nombre').value.trim();
+            const departamento = document.getElementById('departamento').value;
+            const asunto = document.getElementById('asunto').value.trim();
+
+            if (!nombre || !departamento || !asunto) {
+                alert('Por favor complete todos los campos.');
+                return;
+            }
+
+            // Enviar como application/x-www-form-urlencoded para que express.urlencoded lo parsee
+            const params = new URLSearchParams();
+            params.append('accion', 'crear');
+            params.append('nombre', nombre);
+            params.append('departamento', departamento);
+            params.append('asunto', asunto);
+
+            try {
+                const resp = await fetch('controlador/php/tickets.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: params.toString()
+                });
+
+                if (!resp.ok) {
+                    const txt = await resp.text().catch(() => '');
+                    alert('Error del servidor: ' + resp.status + ' ' + txt);
+                    return;
+                }
+
+                let data;
+                try {
+                    data = await resp.json();
+                } catch (e) {
+                    const txt = await resp.text().catch(() => '');
+                    alert('Respuesta inválida del servidor: ' + txt);
+                    return;
+                }
+
+                if (data.success) {
+                    alert('Ticket creado: ' + (data.ticket_id || data.data?.id || '') + '\n' + data.message);
+                    this.reset();
+                } else {
+                    alert('Error: ' + (data.message || 'No se pudo crear el ticket'));
+                }
+
+            } catch (err) {
+                console.error(err);
+                alert('Error de red al conectar con el servidor.');
+            }
+        });
+    </script>
+</body>
+</html>
