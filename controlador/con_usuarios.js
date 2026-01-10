@@ -1,4 +1,4 @@
-const Usuario = require('../../modelo/mod_usuarios')
+const Usuario = require('../modelo/mod_usuarios')
 
 // Código de autenticación válido
 const VALID_AUTH_CODE = "REG2024";

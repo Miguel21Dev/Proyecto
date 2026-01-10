@@ -1,5 +1,5 @@
-const { pool } = require('../../modelo/conexion')
-const Ticket = require('../../modelo/mod_tickets')
+const { pool } = require('../modelo/conexion')
+const Ticket = require('../modelo/mod_tickets')
 
 
 const crearTicket = async (req, res) => {

@@ -5,8 +5,8 @@ const path = require("path");
 
 const PORT = process.env.PORT || 3000;
 
-const conUsuarios = require('./controlador/js/con_usuarios')
-const conTickets = require('./controlador/js/con_tickets')
+const conUsuarios = require('./controlador/con_usuarios')
+const conTickets = require('./controlador/con_tickets')
 
 // Middleware para parsear JSON
 app.use(express.json());
