@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Login - MPPOP</title>
+    <link rel="stylesheet" href="css/comun.css">
+    <style>
+        .info-ayuda {
+            background: #f0f7ff;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+            border-left: 4px solid #007BFF;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <!-- BARRA SUPERIOR -->
+    <header class="barra-mppop">
+        <img src="https://images.seeklogo.com/logo-png/53/1/mppop-logo-png_seeklogo-537041.png" 
+             alt="MPPOP" class="logo-mppop">
+        <button class="btn-superior" onclick="location.href='vis_ventanaPrincipal.html'">
+            ← Volver
+        </button>
+    </header>
+
+    <!-- LOGIN -->
+    <div class="contenedor">
+        <h1 class="titulo-pagina">Iniciar Sesión</h1>
+        
+        <div style="background: white; padding: 25px; border-radius: 8px; max-width: 400px; margin: 0 auto;">
+            <form onsubmit="login(event)">
+                <label style="display: block; margin: 10px 0 5px; font-weight: bold;">Tu ID de usuario</label>
+                <input type="text" 
+                       id="username" 
+                       class="input-mppop" 
+                       placeholder="Ej: jua1234" 
+                       required
+                       style="letter-spacing: 1px;">
+                
+                <button type="submit" class="btn-principal">
+                    Ingresar al sistema
+                </button>
+            </form>
+            
+            <p style="text-align: center; margin-top: 20px;">
+                ¿No tienes usuario? <a href="vis_registro.html">Regístrate aquí</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+      
+        async function login(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value.toLowerCase();
+            
+            const res = await fetch("/usuarios/autenticar", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({username: username}),
+                });
+
+            const result = await res.json()
+            const { usuario } = result
+            
+            
+            if (usuario) {
+                alert(`Bienvenido ${usuario.nombre}`);
+                
+                // Redirigir según rol
+                if (usuario.rol === 'admin') {
+                    location.href = `vis_admin.html?user=${usuario.username}`;
+                } else {
+                    location.href = `vis_tecnico.html?user=${usuario.username}`;
+                }
+            } else {
+                alert('ID de usuario no encontrado');
+            }
+        }
+        
+        // Enter para enviar
+        document.getElementById('username').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                login(e);
+            }
+        });
+    </script>
+</body>
+</html>

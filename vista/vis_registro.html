@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registro de Usuario - MPPOP</title>
+    <!-- CSS principal (común a todas las vistas) -->
+    <link rel="stylesheet" href="css/comun.css" />
+    <!-- CSS adicional solo para registro -->
+    <link rel="stylesheet" href="css/registro.css" />
+  </head>
+
+  <body>
+    <!-- BARRA SUPERIOR -->
+    <header class="barra-mppop">
+      <img
+        src="https://images.seeklogo.com/logo-png/53/1/mppop-logo-png_seeklogo-537041.png"
+        alt="MPPOP"
+        class="logo-mppop"
+      />
+
+      <div class="botones-superiores">
+        <button
+          class="btn-superior"
+          onclick="location.href='vis_ventanaPrincipal.html'"
+        >
+          ← Volver
+        </button>
+        <button
+          class="btn-superior"
+          onclick="location.href='vis_inicioSesion.html'"
+        >
+          Iniciar Sesión
+        </button>
+      </div>
+    </header>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="contenedor">
+      <h1 class="titulo-pagina">Registro de Usuario</h1>
+
+      <div class="formulario-registro">
+        <form id="registerForm">
+          <!-- Nombre completo -->
+          <div class="grupo-formulario">
+            <label for="name">Nombre completo *</label>
+            <input
+              type="text"
+              id="name"
+              class="input-mppop"
+              placeholder="Ej: Juan Pérez"
+              required
+            />
+          </div>
+
+          <!-- Cédula -->
+          <div class="grupo-formulario">
+            <label for="cedula">Cédula *</label>
+            <input
+              type="text"
+              id="cedula"
+              class="input-mppop"
+              placeholder="Ej: 12345678"
+              required
+              maxlength="8"
+            />
+            <small class="mensaje-validacion">Solo números, 8 dígitos</small>
+          </div>
+
+          <!-- Rol del usuario -->
+          <div class="grupo-formulario">
+            <label for="rol">Rol del usuario *</label>
+            <select id="rol" class="select-mppop" required>
+              <option value="">Seleccionar rol...</option>
+              <option value="admin">Administrador</option>
+              <option value="tecnico">Técnico</option>
+            </select>
+          </div>
+
+          <!-- Código de autenticación -->
+          <div class="grupo-formulario">
+            <label for="authCode">Código de autenticación *</label>
+            <input
+              type="text"
+              id="authCode"
+              class="input-mppop"
+              placeholder="Código especial"
+              required
+            />
+            <div class="info-ayuda">
+              Necesitas un código especial para registrarte. Contacta al
+              administrador.
+            </div>
+          </div>
+
+          <!-- Contenedor que muestra información tras el registro -->
+          <div id="userInfo" style="display: none">
+            <!-- Username generado (aparece automáticamente) -->
+            <div
+              id="username-preview"
+              class="username-generado"
+              style="display: none"
+            >
+              <strong>✅ Tu nombre de usuario será:</strong>
+              <div class="username-text" id="generatedUsername">
+                <!-- Aquí aparecerá el username -->
+              </div>
+              <small>Guarda este nombre de usuario para iniciar sesión</small>
+            </div>
+          </div>
+
+          <!-- Mensaje de estado / error -->
+          <div
+            id="message"
+            style="display: none; margin-top: 10px"
+            class="mensaje-error"
+          ></div>
+
+          <!-- Botón de registro -->
+          <button type="submit" id="submitBtn" class="btn-principal">
+            <span id="btnText">Registrarse</span>
+            <span id="loader" class="loader" style="display: none"></span>
+          </button>
+        </form>
+
+        <!-- Enlaces adicionales -->
+        <div style="text-align: center; margin-top: 25px">
+          <p>
+            ¿Ya tienes cuenta?
+            <a href="vis_inicioSesion.html">Inicia sesión aquí</a>
+          </p>
+          <p>
+            <a href="vis_ventanaPrincipal.html"
+              >← Volver a la página principal</a
+            >
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const registerForm = document.getElementById("registerForm");
+        if (!registerForm) return;
+
+        const submitBtn = document.getElementById("submitBtn");
+        const btnText = document.getElementById("btnText");
+        const loader = document.getElementById("loader");
+        const messageDiv = document.getElementById("message");
+        const userInfoDiv = document.getElementById("userInfo");
+        const generatedUsername = document.getElementById("generatedUsername");
+
+        registerForm.addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          const formData = {
+            name: document.getElementById("name").value.trim(),
+            cedula: document.getElementById("cedula").value.trim(),
+            authCode: document.getElementById("authCode").value.trim(),
+            rol: document.getElementById("rol").value.trim(),
+          };
+
+          try {
+            const res = await fetch("/usuarios/registrar", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(formData),
+            });
+
+            const result = await res.json();
+
+            if (res.ok) {
+              if (generatedUsername)
+                generatedUsername.textContent = result.usuario.username;
+              // Mostrar el bloque de preview si existe
+              const preview = document.getElementById("username-preview");
+              if (preview) preview.style.display = "block";
+              // Antes se mostraba una alerta con el username; ahora no se muestra.
+              if (userInfoDiv) userInfoDiv.style.display = "block";
+              registerForm.reset();
+              alert("Registro exitoso");
+            } else {
+              alert(result.error || "Error en registro");
+            }
+          } catch (err) {
+            console.error(err);
+            alert("No se pudo conectar con el servidor");
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
