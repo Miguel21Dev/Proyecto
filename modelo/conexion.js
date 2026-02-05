@@ -6,7 +6,7 @@ const pool = new Pool({
   port: process.env.PGPORT || 5432,
   database: process.env.PGDATABASE || 'mppop_tickets',
   user: process.env.PGUSER || 'postgres',
-  password: process.env.PGPASSWORD || '1234'
+  password: process.env.PGPASSWORD || '123'
 });
 
 (async () => {

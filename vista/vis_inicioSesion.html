@@ -66,20 +66,20 @@
             const { usuario } = result
             
             
-            if (usuario) {
-                alert(`Bienvenido ${usuario.nombre}`);
-                
-                // Redirigir según rol
-                if (usuario.rol === 'admin') {
-                    location.href = `vis_admin.html?user=${usuario.username}`;
-                } else {
-                    location.href = `vis_tecnico.html?user=${usuario.username}`;
-                }
-            } else {
-                alert('ID de usuario no encontrado');
-            }
+        if (result.success && usuario) {
+            alert(`Bienvenido ${usuario.nombre}`);
+            
+            // Redirigir según rol
+            if (usuario.rol === 'admin') {
+                location.href = `vis_admin.html?username=${usuario.username}`;
+            } else if (usuario.rol === 'tecnico') {
+                location.href = `vis_tecnico.html?username=${usuario.username}`;
+            } 
+        } else {
+            alert(result.message || 'Usuario no encontrado');
         }
-        
+    }
+    
         // Enter para enviar
         document.getElementById('username').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {

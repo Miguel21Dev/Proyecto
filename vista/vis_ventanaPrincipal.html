@@ -28,11 +28,11 @@
         <div style="background: white; padding: 20px; border-radius: 8px; max-width: 500px; margin: 0 auto;">
             <form id="form-ticket">
                 <!-- Nombre -->
-                <label style="display: block; margin: 10px 0 5px;">Nombre completo</label>
+                <label style="display: block; margin: 10px 0 5px;">Nombre completo *</label>
                 <input type="text" name="nombre" id="nombre" class="input-mppop" required>
 
                 <!-- Departamento -->
-                <label style="display: block; margin: 10px 0 5px;">Departamento</label>
+                <label style="display: block; margin: 10px 0 5px;">Departamento *</label>
                 <select name="departamento" id="departamento" class="select-mppop" required>
                     <option value="">Seleccionar</option>
                     <option>Atención al ciudadano</option>
@@ -52,12 +52,17 @@
                 </select>
 
                 <!-- Asunto -->
-                <label style="display: block; margin: 10px 0 5px;">Asunto</label>
-                <textarea name="asunto" id="asunto" class="input-mppopA" required></textarea>
+                <label style="display: block; margin: 10px 0 5px;">Asunto *</label>
+                <textarea name="asunto" id="asunto" class="input-mppopA" maxlength="200" required></textarea>
+                <div id="asunto-error" style="color:#d32f2f; font-size:13px; margin-top:6px; display:none;"></div>
+                <div id="asunto-count" style="font-size:12px; color:#666; text-align:right;">0/200</div>
+
+                <!-- Campos obligatorios -->
+                <label style="color: rgb(202, 0, 0); padding: 10px; width: 100%; margin-top: 20px;font-size: 12px;">(*) CAMPOS OBLIGATORIOS</label>
 
                 <!-- Botón -->
                 <button type="submit"
-                        style="background: #007BFF; color: white; padding: 10px; border: none; border-radius: 4px; width: 100%; margin-top: 20px; cursor: pointer;">
+                        style="background: #007BFF; color: white; padding: 10px; border: none; border-radius: 4px; width: 100%; margin-top: 20px; cursor: pointer;font-size: 16px;">
                     Enviar solicitud
                 </button>
             </form>
@@ -70,7 +75,21 @@
 
             const nombre = document.getElementById('nombre').value.trim();
             const departamento = document.getElementById('departamento').value;
-            const asunto = document.getElementById('asunto').value.trim();
+            const asuntoEl = document.getElementById('asunto');
+            const asunto = asuntoEl.value.trim();
+            const asuntoError = document.getElementById('asunto-error');
+            const asuntoCount = document.getElementById('asunto-count');
+
+            asuntoCount.textContent = `${asunto.length}/200`;
+
+            if (asunto.length > 200) {
+                asuntoError.textContent = 'El asunto supera el límite de 200 caracteres.';
+                asuntoError.style.display = 'block';
+                asuntoEl.focus();
+                return;
+            } else {
+                asuntoError.style.display = 'none';
+            }
 
             if (!nombre || !departamento || !asunto) {
                 alert('Por favor complete todos los campos.');
@@ -103,6 +122,24 @@
                 alert('Error de red al conectar con el servidor.');
             }
         });
+
+        // Mostrar contador y validar en tiempo real
+        const asuntoInput = document.getElementById('asunto');
+        const asuntoCountEl = document.getElementById('asunto-count');
+        const asuntoErrorEl = document.getElementById('asunto-error');
+        if (asuntoInput) {
+            asuntoCountEl.textContent = `${asuntoInput.value.length}/200`;
+            asuntoInput.addEventListener('input', () => {
+                const len = asuntoInput.value.length;
+                asuntoCountEl.textContent = `${len}/200`;
+                if (len > 200) {
+                    asuntoErrorEl.textContent = 'El asunto supera el límite de 200 caracteres.';
+                    asuntoErrorEl.style.display = 'block';
+                } else {
+                    asuntoErrorEl.style.display = 'none';
+                }
+            });
+        }
     </script>
 </body>
 </html>
