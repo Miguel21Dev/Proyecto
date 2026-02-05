@@ -53,7 +53,9 @@
 
                 <!-- Asunto -->
                 <label style="display: block; margin: 10px 0 5px;">Asunto *</label>
-                <input type="text" name="asunto" id="asunto" class="input-asunto"  required>
+                <textarea name="asunto" id="asunto" class="input-mppopA" maxlength="200" required></textarea>
+                <div id="asunto-error" style="color:#d32f2f; font-size:13px; margin-top:6px; display:none;"></div>
+                <div id="asunto-count" style="font-size:12px; color:#666; text-align:right;">0/200</div>
 
                 <!-- Campos obligatorios -->
                 <label style="color: rgb(202, 0, 0); padding: 10px; width: 100%; margin-top: 20px;font-size: 12px;">(*) CAMPOS OBLIGATORIOS</label>
@@ -73,7 +75,21 @@
 
             const nombre = document.getElementById('nombre').value.trim();
             const departamento = document.getElementById('departamento').value;
-            const asunto = document.getElementById('asunto').value.trim();
+            const asuntoEl = document.getElementById('asunto');
+            const asunto = asuntoEl.value.trim();
+            const asuntoError = document.getElementById('asunto-error');
+            const asuntoCount = document.getElementById('asunto-count');
+
+            asuntoCount.textContent = `${asunto.length}/200`;
+
+            if (asunto.length > 200) {
+                asuntoError.textContent = 'El asunto supera el límite de 200 caracteres.';
+                asuntoError.style.display = 'block';
+                asuntoEl.focus();
+                return;
+            } else {
+                asuntoError.style.display = 'none';
+            }
 
             if (!nombre || !departamento || !asunto) {
                 alert('Por favor complete todos los campos.');
@@ -106,6 +122,24 @@
                 alert('Error de red al conectar con el servidor.');
             }
         });
+
+        // Mostrar contador y validar en tiempo real
+        const asuntoInput = document.getElementById('asunto');
+        const asuntoCountEl = document.getElementById('asunto-count');
+        const asuntoErrorEl = document.getElementById('asunto-error');
+        if (asuntoInput) {
+            asuntoCountEl.textContent = `${asuntoInput.value.length}/200`;
+            asuntoInput.addEventListener('input', () => {
+                const len = asuntoInput.value.length;
+                asuntoCountEl.textContent = `${len}/200`;
+                if (len > 200) {
+                    asuntoErrorEl.textContent = 'El asunto supera el límite de 200 caracteres.';
+                    asuntoErrorEl.style.display = 'block';
+                } else {
+                    asuntoErrorEl.style.display = 'none';
+                }
+            });
+        }
     </script>
 </body>
 </html>

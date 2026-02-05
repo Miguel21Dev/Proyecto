@@ -96,6 +96,13 @@ body {
     border-bottom: 1px solid #eee;
 }
 
+.celda-asunto {
+    max-width: 420px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .tabla-mppop tr:hover {
     background: #f9f9f9;
 }
@@ -166,6 +173,25 @@ body {
     margin: 8px 0;
     border: 1px solid #b5b5b5;
     border-radius: 4px;
+    max-height: 160px;
+    overflow: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.input-mppopA {
+    width: 100%;
+    min-height: 150px;
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    resize: vertical;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    vertical-align: top;
 }
 
 .select-mppop {

@@ -22,7 +22,7 @@
           id="admin"
         >
         </span>
-        <button class="btn-superior" onclick="alert('Historial')">
+        <button id="btnHistorial" class="btn-superior">
           📊 Historial
         </button>
         <button
@@ -158,7 +158,7 @@
 
           fila.innerHTML = `
             <td>${ticket.id}</td>
-            <td>${ticket.asunto}</td>
+            <td class="celda-asunto">${ticket.asunto}</td>
             <td>${prioridad}</td>
             <td>${ticket.fecha}</td>
             <td>${ticket.estado}</td>
@@ -310,7 +310,13 @@
         usuarioActual = await obtenerUsuario(username);
         const nombreElemento = document.getElementById("admin");
         if (nombreElemento) {
-          nombreElemento.textContent = `Admin: ${usuarioActual.nombre}`;
+          nombreElemento.textContent = `Admin: ${usuarioActual?.nombre || 'Admin'}`;
+        }
+        // Configurar botón Historial para conservar username en la query
+        const btnHist = document.getElementById('btnHistorial');
+        if (btnHist) {
+          if (username) btnHist.addEventListener('click', () => location.href = `vis_historial.html?username=${encodeURIComponent(username)}`);
+          else btnHist.addEventListener('click', () => location.href = 'vis_historial.html');
         }
         cargarTecnicos();
         cargarTablaTickets();
