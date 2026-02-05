@@ -1,0 +1,25 @@
+/* Styles for descarga button and menu */
+
+.descarga-mppop { position: fixed; top: 170px; right: 10%; display: inline-flex; align-items: center; gap: 8px; z-index: 1200; }
+
+.descarga-toggle { background: #ffffff; border: 1px solid #d6d6d6; padding: 6px 10px; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-weight: 600; color: #2C3E50; }
+.descarga-toggle:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+
+.icon { display: inline-block; width: 20px; text-align: center; transition: transform .25s ease; }
+.icon.loading { animation: spin 1s linear infinite; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* Menu aligned to the right edge of the control */
+.descarga-menu { position: absolute; top: calc(100% + 8px); right: 0; left: auto; background: #fff; border: 1px solid #e6e6e6; padding: 10px; border-radius: 8px; box-shadow: 0 6px 18px rgba(16,24,40,0.08); display: flex; gap: 8px; align-items: center; z-index: 1000; }
+.descarga-menu[hidden] { display: none; }
+
+/* Make month select wider so full month name is visible; keep year input compact */
+.descarga-menu .select-mppop { padding: 6px 8px; border: 1px solid #cfcfcf; border-radius: 6px; outline: none; min-width: 150px; }
+.descarga-menu input[type="number"] { padding: 6px 8px; border: 1px solid #cfcfcf; border-radius: 6px; outline: none; width: 110px; }
+.btn-confirm:hover { opacity: 0.95; }
+
+/* Small responsive tweak */
+@media (max-width: 520px) {
+  .descarga-mppop { position: static; margin: 10px 0; }
+  .descarga-menu { left: 8px; right: 8px; width: auto; flex-direction: column; gap: 6px; }
+}

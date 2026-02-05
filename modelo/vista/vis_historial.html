@@ -1,0 +1,296 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Historial - MPPOP</title>
+    <!-- SOLO ESTE CSS PARA TODAS LAS VISTAS -->
+    <link rel="stylesheet" href="css/comun.css" />
+      <link rel="stylesheet" href="css/descarga.css" />
+  </head>
+
+  <body>
+    <!-- BARRA SUPERIOR (REUTILIZABLE) -->
+    <header class="barra-mppop">
+      <img
+        src="https://images.seeklogo.com/logo-png/53/1/mppop-logo-png_seeklogo-537041.png"
+        alt="MPPOP"
+        class="logo-mppop"
+      />
+
+      <div class="botones-superiores">
+        <span
+          style="padding: 8px 15px; color: #2c3e50; font-weight: bold"
+          id="admin"
+        >
+        </span>
+        <button id="btnHistorial" class="btn-superior">
+          ← Volver
+        </button>
+        <button
+          class="btn-superior"
+          onclick="location.href = 'vis_inicioSesion.html'"
+        >
+          🚪 Cerrar Sesión
+        </button>
+      </div>
+    </header>
+
+    <!-- CONTENIDO ESPECÍFICO DE ESTA VISTA -->
+    <div class="contenedor">
+      <h1 class="titulo-pagina">Gestión de Tickets</h1>
+
+      <div class="descarga-mppop" aria-hidden="false">
+        <div id="descargaToggle" class="descarga-toggle">
+          <span class="icon">⬇️</span>
+          Descargar
+        </div>
+        <div id="descargaMenu" class="descarga-menu" hidden>
+          <select id="mesHistorial" class="select-mppop">
+            <option value="">Seleccionar mes</option>
+            <option value="1">Enero</option>
+            <option value="2">Febrero</option>
+            <option value="3">Marzo</option>
+            <option value="4">Abril</option>
+            <option value="5">Mayo</option>
+            <option value="6">Junio</option>
+            <option value="7">Julio</option>
+            <option value="8">Agosto</option>
+            <option value="9">Septiembre</option>
+            <option value="10">Octubre</option>
+            <option value="11">Noviembre</option>
+            <option value="12">Diciembre</option>
+          </select>
+          <input id="añoHistorial" type="number" min="2000" max="2100" style="width:110px;" />
+          <button id="descargarPdf" class="btn-confirm btn-superior">PDF</button>
+          <button id="descargarExcel" class="btn-confirm btn-superior">Excel</button>
+        </div>
+      </div>
+
+      <table class="tabla-mppop">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Asunto</th>
+            <th>Prioridad</th>
+            <th>Fecha</th>
+            <th>Estado</th>
+            <th>Técnico</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tablaTickets">
+          <!-- Se llena con JavaScript -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- MODAL (REUTILIZABLE) 
+    <div id="modalAsignar" class="modal-mppop">
+      <div class="modal-contenido">
+        <h3>Asignar Ticket</h3>
+        <p>ID: <span id="ticketId"></span></p>
+
+        <label>Prioridad:</label>
+        <select id="prioridad" class="select-mppop">
+          <option value="">Seleccionar</option>
+          <option value="alta">Alta</option>
+          <option value="media">Media</option>
+          <option value="baja">Baja</option>
+        </select>
+
+        <label for="tecnico">Técnico:</label>
+        <select id="tecnico" class="select-mppop" required>
+          <option value="">Seleccionar</option>
+          <!-- Las opciones se llenarán dinámicamente 
+        </select>
+
+        <div style="margin-top: 20px; text-align: right">
+          <button
+            onclick="guardarAsignacion()"
+            style="
+              background: #007bff;
+              color: white;
+              padding: 10px 20px;
+              border: none;
+              border-radius: 4px;
+              cursor: pointer;
+            "
+          >
+            Guardar
+          </button>
+          <button
+            onclick="cerrarModal()"
+            style="
+              background: #f5f5f5;
+              padding: 10px 20px;
+              border: 1px solid #ddd;
+              border-radius: 4px;
+              cursor: pointer;
+              margin-left: 10px;
+            "
+          >
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div> -->
+
+    <script>
+      async function cargarTablaTickets() {
+        // Obtener tickets finalizados con filtros opcionales
+        const mes = document.getElementById('mesHistorial')?.value;
+        const anio = document.getElementById('añoHistorial')?.value;
+        const params = new URLSearchParams();
+        if (mes) params.set('mes', mes);
+        if (anio) params.set('anio', anio);
+        const url = '/historial/finalizados' + (params.toString() ? ('?' + params.toString()) : '');
+        
+        const res = await fetch(url, { method: 'GET', headers: { 'Content-Type': 'application/json' } });
+        const ticketsResp = await res.json();
+        
+        const tbody = document.getElementById("tablaTickets");
+        if (!tbody) return;
+        tbody.innerHTML = "";
+        
+        const lista = ticketsResp.tickets || [];
+        lista.forEach((ticket) => {
+          const fila = tbody.insertRow();
+          const prioridad = ticket.prioridad
+            ? `<span class="badge badge-${ticket.prioridad}">${ticket.prioridad}</span>`
+            : "-";
+
+          fila.innerHTML = `
+            <td>${ticket.id}</td>
+            <td class="celda-asunto">${ticket.asunto}</td>
+            <td>${prioridad}</td>
+            <td>${ticket.fecha}</td>
+            <td>${ticket.estado}</td>
+            <td>${ticket.tecnico || "-"}</td>
+            <td>
+                <button class="btn-accion btn-ver" onclick="verDetalles('${ticket.id}')">👁️</button>
+            </td>
+        `;
+        });
+      }
+
+
+      async function verDetalles(ticketId) {
+        try {
+          const response = await fetch(`/tickets/${ticketId}`);
+          const resultado = await response.json();
+
+          if (resultado.success) {
+            const ticket = resultado.ticket;
+            // Muestra todos los datos que recibas
+            let mensaje = `📋 Ticket: ${ticket.id}\n`;
+            mensaje += `📝 Asunto: ${ticket.asunto}\n`;
+
+            // Solo si existen estos campos
+            if (ticket.nombre_completo)
+              mensaje += `👤 Solicitante: ${ticket.nombre_completo}\n`;
+            if (ticket.departamento)
+              mensaje += `🏢 Departamento: ${ticket.departamento}\n`;
+
+            mensaje += `⚡ Prioridad: ${ticket.prioridad}\n`;
+            mensaje += `📅 Fecha: ${ticket.fecha}\n`;
+            mensaje += `🔄 Estado: ${ticket.estado}\n`;
+            if (ticket.tecnico) mensaje += `🔧 Técnico: ${ticket.tecnico}\n`;
+            if (ticket.descripcion)
+              mensaje += `📄 Descripción: ${ticket.descripcion}`;
+
+            alert(mensaje);
+          } else {
+            alert("Error: " + resultado.message);
+          }
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      }
+
+
+
+
+      async function obtenerUsuario(username) {
+        const res = await fetch("/usuarios/autenticar", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username }),
+        });
+
+        const result = await res.json();
+        const { usuario } = result;
+        return usuario;
+      }
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const username = urlParams.get('username');
+      let usuarioActual;
+
+      async function cargarDatosPantalla() {
+        if (username) {
+          try {
+            usuarioActual = await obtenerUsuario(username);
+            const nombreElemento = document.getElementById("admin");
+            if (nombreElemento && usuarioActual) {
+              nombreElemento.textContent = `Admin: ${usuarioActual.nombre}`;
+            }
+          } catch (e) { console.error('No se pudo obtener usuario:', e); }
+
+          const btn = document.getElementById('btnHistorial');
+          if (btn) btn.addEventListener('click', () => { location.href = 'vis_admin.html?username=' + encodeURIComponent(username); });
+        } else {
+          const btn = document.getElementById('btnHistorial');
+          if (btn) btn.addEventListener('click', () => { location.href = 'vis_admin.html'; });
+        }
+        cargarTablaTickets();
+      }
+
+      // Inicializar
+      // Toggle y lógica de descarga + wiring de filtros
+      function toggleDescargaMenu() {
+        const menu = document.getElementById('descargaMenu');
+        if (!menu) return;
+        menu.hidden = !menu.hidden;
+      }
+
+      function construirUrlDescarga(format) {
+        const mes = document.getElementById('mesHistorial')?.value || '';
+        const anio = document.getElementById('añoHistorial')?.value || '';
+        const params = new URLSearchParams();
+        if (mes) params.set('mes', mes);
+        if (anio) params.set('anio', anio);
+        params.set('format', format);
+        return '/historial/descarga?' + params.toString();
+      }
+
+      document.addEventListener('click', (e) => {
+        const toggle = document.getElementById('descargaToggle');
+        const menu = document.getElementById('descargaMenu');
+        if (!toggle || !menu) return;
+        if (toggle.contains(e.target)) {
+          toggleDescargaMenu();
+        } else if (!menu.contains(e.target)) {
+          menu.hidden = true;
+        }
+      });
+
+      // Inicializar mes/año y listeners
+      (function initDescargaControls(){
+        const mesEl = document.getElementById('mesHistorial');
+        const anioEl = document.getElementById('añoHistorial');
+        const ahora = new Date();
+        if (anioEl && !anioEl.value) anioEl.value = ahora.getFullYear();
+
+        if (mesEl) mesEl.addEventListener('change', cargarTablaTickets);
+        if (anioEl) anioEl.addEventListener('change', cargarTablaTickets);
+
+        const btnPdf = document.getElementById('descargarPdf');
+        const btnXls = document.getElementById('descargarExcel');
+        if (btnPdf) btnPdf.addEventListener('click', () => { window.location = construirUrlDescarga('pdf'); });
+        if (btnXls) btnXls.addEventListener('click', () => { window.location = construirUrlDescarga('excel'); });
+      })();
+
+      document.addEventListener("DOMContentLoaded", cargarDatosPantalla);
+    </script>
+  </body>
+</html>
