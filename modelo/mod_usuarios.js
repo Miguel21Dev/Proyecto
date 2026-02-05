@@ -70,6 +70,34 @@ class Usuario {
         return primerasTresLetras + ultimosCuatroDigitos;
     }
 
+    static async obtenerTecnicos() {
+        try {
+            const sql = `SELECT 
+                id,
+                username,
+                nombre,
+                rol
+            FROM usuarios 
+            WHERE rol = $1 
+            ORDER BY nombre ASC`;
+            
+            const result = await pool.query(sql, ['tecnico']);
+            
+            return { 
+                success: true, 
+                data: result.rows, 
+                message: 'Técnicos obtenidos exitosamente' 
+            };
+            
+        } catch (error) {
+            console.error('Error en modelo Usuario.obtenerTecnicos:', error);
+            return { 
+                success: false, 
+                data: [], 
+                message: 'Error en la base de datos: ' + error.message 
+            };
+        }
+    }
 }
 
 module.exports = Usuario

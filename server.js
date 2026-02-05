@@ -23,10 +23,15 @@ app.get("/", (req, res) => {
 });
 
 app.post('/usuarios/registrar', conUsuarios.registrar)
-app.post('/usuarios/autenticar', conUsuarios.autenticar)
-
+app.post('/usuarios/autenticar', conUsuarios.autenticar) 
+app.get('/usuarios/tecnicos', conUsuarios.obtenerTecnicos)
+ 
 app.post('/tickets/crearTicket', conTickets.crearTicket)
-
+app.get('/tickets/obtenerTicketsAdmin', conTickets.obtenerTicketsAdmin)
+app.post('/tickets/asignarTicket', conTickets.asignarTicket)
+app.get('/tickets/tecnico/:username', conTickets.obtenerTicketsPorTecnico);
+app.get('/tickets/:id', conTickets.obtenerTicketPorId);       
+app.put('/tickets/:id/estado', conTickets.actualizarEstadoTicket);
 
 const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`Servidor ejecutándose en http://0.0.0.0:${PORT} (process.env.PORT=${process.env.PORT || ''})`);
@@ -35,3 +40,4 @@ const server = app.listen(PORT, '0.0.0.0', () => {
 server.on('error', (err) => {
   console.error('Error al iniciar el servidor:', err);
 });
+ 

@@ -68,6 +68,31 @@ const autenticar =  async (req, res) => {
   }
 };
 
+// Obtener lista de técnicos
+const obtenerTecnicos = async (req, res) => {
+    try {
+        const resultado = await Usuario.obtenerTecnicos();
+        
+        if (resultado.success) {
+            return res.json({
+                success: true,
+                data: resultado.data
+            });
+        } else {
+            return res.status(404).json({
+                success: false,
+                data: [],
+                message: resultado.message
+            });
+        }
+        
+    } catch (error) {
+        console.error('Error al obtener técnicos:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error al obtener técnicos'
+        });
+    }
+};
 
-
-module.exports = { registrar, autenticar }
+module.exports = { registrar, autenticar, obtenerTecnicos }
