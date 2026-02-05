@@ -94,16 +94,16 @@ const asignarTicket = async (req, res) => {
 
 
 
-// Obtener lista de técnicos activos
-const obtenerTecnicos = async () => {
+// Obtener lista de técnicos activos (handler HTTP)
+const obtenerTecnicos = async (req, res) => {
     try {
-        const sql = `SELECT id, nombre FROM usuarios WHERE rol = 'tecnico' AND activo = true ORDER BY nombre`;
-        const result = await this.pool.query(sql);
+        const sql = `SELECT id, nombre, username FROM usuarios WHERE rol = 'tecnico' AND activo = true ORDER BY nombre`;
+        const result = await pool.query(sql);
 
-        return { success: true, tecnicos: result.rows };
-
+        res.status(200).json({ success: true, data: result.rows });
     } catch (error) {
-        return { success: false, message: 'Error al obtener técnicos: ' + error.message };
+        console.error('Error al obtener técnicos:', error);
+        res.status(500).json({ success: false, message: 'Error al obtener técnicos: ' + error.message });
     }
 };
 
@@ -140,22 +140,28 @@ const actualizarEstadoTicket = async (req, res) => {
     }
 };
 
-// Eliminar un ticket
-const eliminarTicket = async (ticket_id) => {
+// Eliminar un ticket (handler HTTP)
+const eliminarTicket = async (req, res) => {
     try {
-        const sql = `DELETE FROM tickets WHERE ticket_id = $1`;
-
-        const result = await this.pool.query(sql, [ticket_id]);
-
-        if (result.rowCount > 0) {
-            return { success: true, message: 'Ticket eliminado correctamente' };
-        } else {
-            return { success: false, message: 'Ticket no encontrado' };
+        const { ticket_id } = req.body || req.params || {};
+        if (!ticket_id) {
+            res.status(400).json({ success: false, message: 'Falta ticket_id' });
+            return;
         }
 
-    } catch (error) {
-        return { success: false, message: 'Error al eliminar ticket: ' + error.message };
-    }
-}
+        // Usamos `id` como nombre de columna; ajusta si tu esquema es diferente
+        const sql = `DELETE FROM tickets WHERE id = $1`;
+        const result = await pool.query(sql, [ticket_id]);
 
-module.exports = { crearTicket, obtenerTicketsAdmin, obtenerTecnicos, asignarTicket, obtenerTicketsPorTecnico, obtenerTicketPorId, actualizarEstadoTicket}
+        if (result.rowCount > 0) {
+            res.status(200).json({ success: true, message: 'Ticket eliminado correctamente' });
+        } else {
+            res.status(404).json({ success: false, message: 'Ticket no encontrado' });
+        }
+    } catch (error) {
+        console.error('Error al eliminar ticket:', error);
+        res.status(500).json({ success: false, message: 'Error al eliminar ticket: ' + error.message });
+    }
+};
+
+module.exports = { crearTicket, obtenerTicketsAdmin, obtenerTecnicos, asignarTicket, obtenerTicketsPorTecnico, obtenerTicketPorId, actualizarEstadoTicket, eliminarTicket }

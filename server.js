@@ -29,6 +29,7 @@ app.get('/usuarios/tecnicos', conUsuarios.obtenerTecnicos)
 app.post('/tickets/crearTicket', conTickets.crearTicket)
 app.get('/tickets/obtenerTicketsAdmin', conTickets.obtenerTicketsAdmin)
 app.post('/tickets/asignarTicket', conTickets.asignarTicket)
+app.post('/tickets/eliminarTicket', conTickets.eliminarTicket)
 app.get('/tickets/tecnico/:username', conTickets.obtenerTicketsPorTecnico);
 app.get('/tickets/:id', conTickets.obtenerTicketPorId);       
 app.put('/tickets/:id/estado', conTickets.actualizarEstadoTicket);

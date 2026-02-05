@@ -258,10 +258,25 @@
         }
       }
 
-      function eliminarTicket(id) {
-        if (confirm("¿Eliminar ticket " + id + "?")) {
-          tickets = tickets.filter((t) => t.id !== id);
-          cargarTablaTickets();
+      async function eliminarTicket(id) {
+        if (!confirm("¿Eliminar ticket " + id + "?")) return;
+        try {
+          const res = await fetch('/tickets/eliminarTicket', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ticket_id: Number(id) })
+          });
+
+          const resp = await res.json();
+          if (resp.success) {
+            alert('Ticket eliminado');
+            cargarTablaTickets();
+          } else {
+            alert('Error: ' + (resp.message || 'No se pudo eliminar'));
+          }
+        } catch (error) {
+          console.error('Error al eliminar ticket:', error);
+          alert('Error al eliminar ticket');
         }
       }
 
