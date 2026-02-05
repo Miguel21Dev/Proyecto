@@ -162,6 +162,21 @@ body {
     border-radius: 4px;
 }
 
+.input-mppopA {
+    width: 100%;
+    min-height: 150px;
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    resize: vertical;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    vertical-align: top;
+}
+
 .select-mppop {
     width: 100%;
     padding: 10px;
