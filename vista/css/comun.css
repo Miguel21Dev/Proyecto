@@ -25,8 +25,6 @@
     box-shadow: 0 0 0 2px rgba(0,123,255,0.2);
 }
 
-
-
 /* RESET BÁSICO */
 * {
     margin: 0;
@@ -36,7 +34,7 @@
 }
 
 body {
-    background: #f5f5f5;
+    background: #859dec;
     padding: 20px;
 }
 
@@ -50,11 +48,11 @@ body {
     margin-bottom: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    border-left: 5px solid #007BFF;
+    border-left: 7px solid #007BFF;
 }
 
 .logo-mppop {
-    height: 80px;
+    height: 90px;
 }
 
 .botones-superiores {
@@ -65,10 +63,10 @@ body {
 .btn-superior {
     padding: 8px 15px;
     border: 1px solid #ddd;
-    background: #c0dfff;
+    background: #9cc5ef;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 17px;
 }
 
 .btn-superior:hover {
@@ -96,6 +94,13 @@ body {
 .tabla-mppop td {
     padding: 12px;
     border-bottom: 1px solid #eee;
+}
+
+.celda-asunto {
+    max-width: 420px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .tabla-mppop tr:hover {
@@ -158,15 +163,42 @@ body {
     width: 100%;
     padding: 10px;
     margin: 8px 0;
+    border: 1px solid #b5b5b5;
+    border-radius: 4px;
+}
+
+.input-asunto {
+    width: 100%;
+    padding: 60px;
+    margin: 8px 0;
+    border: 1px solid #b5b5b5;
+    border-radius: 4px;
+    max-height: 160px;
+    overflow: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.input-mppopA {
+    width: 100%;
+    min-height: 150px;
+    padding: 10px;
+    margin: 8px 0;
     border: 1px solid #ddd;
     border-radius: 4px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    resize: vertical;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    vertical-align: top;
 }
 
 .select-mppop {
     width: 100%;
     padding: 10px;
     margin: 8px 0;
-    border: 1px solid #ddd;
+    border: 1px solid #b5b5b5;
     border-radius: 4px;
     background: white;
 }
@@ -203,7 +235,7 @@ body {
 }
 
 .titulo-pagina {
-    color: #2C3E50;
+    color: #000222;
     margin: 20px auto;
     font-size: 24px;
     text-align: center;

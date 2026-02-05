@@ -7,6 +7,7 @@ const PORT = process.env.PORT || 3000;
 
 const conUsuarios = require('./controlador/con_usuarios')
 const conTickets = require('./controlador/con_tickets')
+const conHistorial = require('./controlador/con_historial')
 
 // Middleware para parsear JSON
 app.use(express.json());
@@ -23,10 +24,19 @@ app.get("/", (req, res) => {
 });
 
 app.post('/usuarios/registrar', conUsuarios.registrar)
-app.post('/usuarios/autenticar', conUsuarios.autenticar)
-
+app.post('/usuarios/autenticar', conUsuarios.autenticar) 
+app.get('/usuarios/tecnicos', conUsuarios.obtenerTecnicos)
+ 
 app.post('/tickets/crearTicket', conTickets.crearTicket)
-
+app.get('/tickets/obtenerTicketsAdmin', conTickets.obtenerTicketsAdmin)
+app.post('/tickets/asignarTicket', conTickets.asignarTicket)
+app.post('/tickets/eliminarTicket', conTickets.eliminarTicket)
+app.get('/tickets/tecnico/:username', conTickets.obtenerTicketsPorTecnico);
+app.get('/tickets/:id', conTickets.obtenerTicketPorId);       
+app.put('/tickets/:id/estado', conTickets.actualizarEstadoTicket);
+// Historial: mostrar finalizados y generar descargas
+app.get('/historial/finalizados', conHistorial.mostrarFinalizados);
+app.get('/historial/descarga', conHistorial.generarDescarga);
 
 const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`Servidor ejecutándose en http://0.0.0.0:${PORT} (process.env.PORT=${process.env.PORT || ''})`);
@@ -35,3 +45,4 @@ const server = app.listen(PORT, '0.0.0.0', () => {
 server.on('error', (err) => {
   console.error('Error al iniciar el servidor:', err);
 });
+ 

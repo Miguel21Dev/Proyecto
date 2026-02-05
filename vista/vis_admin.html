@@ -1,183 +1,337 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Admin - MPPOP</title>
     <!-- SOLO ESTE CSS PARA TODAS LAS VISTAS -->
-    <link rel="stylesheet" href="css/comun.css">
-</head>
+    <link rel="stylesheet" href="css/comun.css" />
+  </head>
 
-<body>
+  <body>
     <!-- BARRA SUPERIOR (REUTILIZABLE) -->
     <header class="barra-mppop">
-        <img src="https://images.seeklogo.com/logo-png/53/1/mppop-logo-png_seeklogo-537041.png" alt="MPPOP"
-            class="logo-mppop">
+      <img
+        src="https://images.seeklogo.com/logo-png/53/1/mppop-logo-png_seeklogo-537041.png"
+        alt="MPPOP"
+        class="logo-mppop"
+      />
 
-        <div class="botones-superiores">
-            <span style="padding: 8px 15px; color: #2C3E50; font-weight: bold;">
-                Usuario Actual
-            </span>
-            <button class="btn-superior" onclick="alert('Tickets activos')">
-                📋 Tickets
-            </button>
-            <button class="btn-superior" onclick="location.href='vis_historial.html'">
-                📊 Historial
-            </button>
-            <button class="btn-superior" onclick="location.href='vis_inicioSesion.html'">
-                🚪 Cerrar Sesión
-            </button>
-        </div>
+      <div class="botones-superiores">
+        <span
+          style="padding: 8px 15px; color: #2c3e50; font-weight: bold"
+          id="admin"
+        >
+        </span>
+        <button id="btnHistorial" class="btn-superior">
+          📊 Historial
+        </button>
+        <button
+          class="btn-superior"
+          onclick="location.href = 'vis_inicioSesion.html'"
+        >
+          🚪 Cerrar Sesión
+        </button>
+      </div>
     </header>
 
     <!-- CONTENIDO ESPECÍFICO DE ESTA VISTA -->
     <div class="contenedor">
-        <h1 class="titulo-pagina">Gestión de Tickets</h1>
+      <h1 class="titulo-pagina">Gestión de Tickets</h1>
 
-        <table class="tabla-mppop">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Asunto</th>
-                    <th>Prioridad</th>
-                    <th>Fecha</th>
-                    <th>Estado</th>
-                    <th>Técnico</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody id="tablaTickets">
-                <!-- Se llena con JavaScript -->
-            </tbody>
-        </table>
+      <table class="tabla-mppop">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Asunto</th>
+            <th>Prioridad</th>
+            <th>Fecha</th>
+            <th>Estado</th>
+            <th>Técnico</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tablaTickets">
+          <!-- Se llena con JavaScript -->
+        </tbody>
+      </table>
     </div>
 
     <!-- MODAL (REUTILIZABLE) -->
     <div id="modalAsignar" class="modal-mppop">
-        <div class="modal-contenido">
-            <h3>Asignar Ticket</h3>
-            <p>ID: <span id="ticketId"></span></p>
+      <div class="modal-contenido">
+        <h3>Asignar Ticket</h3>
+        <p>ID: <span id="ticketId"></span></p>
 
-            <label>Prioridad:</label>
-            <select id="prioridad" class="select-mppop">
-                <option value="">Seleccionar</option>
-                <option value="alta">Alta</option>
-                <option value="media">Media</option>
-                <option value="baja">Baja</option>
-            </select>
+        <label>Prioridad:</label>
+        <select id="prioridad" class="select-mppop">
+          <option value="">Seleccionar</option>
+          <option value="alta">Alta</option>
+          <option value="media">Media</option>
+          <option value="baja">Baja</option>
+        </select>
 
-            <label>Técnico:</label>
-            <select id="tecnico" class="select-mppop">
-                <option value="">Seleccionar</option>
-                <option value="1">Juan Pérez</option>
-                <option value="2">María González</option>
-            </select>
+        <label for="tecnico">Técnico:</label>
+        <select id="tecnico" class="select-mppop" required>
+          <option value="">Seleccionar</option>
+          <!-- Las opciones se llenarán dinámicamente -->
+        </select>
 
-            <div style="margin-top: 20px; text-align: right;">
-                <button onclick="guardarAsignacion()"
-                    style="background: #007BFF; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">
-                    Guardar
-                </button>
-                <button onclick="cerrarModal()"
-                    style="background: #f5f5f5; padding: 10px 20px; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; margin-left: 10px;">
-                    Cancelar
-                </button>
-            </div>
+        <div style="margin-top: 20px; text-align: right">
+          <button
+            onclick="guardarAsignacion()"
+            style="
+              background: #007bff;
+              color: white;
+              padding: 10px 20px;
+              border: none;
+              border-radius: 4px;
+              cursor: pointer;
+            "
+          >
+            Guardar
+          </button>
+          <button
+            onclick="cerrarModal()"
+            style="
+              background: #f5f5f5;
+              padding: 10px 20px;
+              border: 1px solid #ddd;
+              border-radius: 4px;
+              cursor: pointer;
+              margin-left: 10px;
+            "
+          >
+            Cancelar
+          </button>
         </div>
+      </div>
     </div>
 
     <script>
-        let tickets = [
-            { id: "TCK-001", asunto: "Error en sistema", prioridad: "", fecha: "15/12/2024", estado: "Abierto", tecnico: "" },
-            { id: "TCK-002", asunto: "Solicitud acceso", prioridad: "media", fecha: "14/12/2024", estado: "En proceso", tecnico: "Juan Pérez" }
-        ];
+      let ticketActual = null;
 
-        let ticketActual = null;
+      // Cargar técnicos
+      async function cargarTecnicos() {
+        try {
+          const response = await fetch("/usuarios/tecnicos");
+          const data = await response.json();
 
-        function cargarTablaTickets() {
-            const tbody = document.getElementById('tablaTickets');
-            if (!tbody) return;
+          if (data.success && data.data) {
+            actualizarSelectTecnicos(data.data);
+          }
+        } catch (error) {
+          console.error("Error al cargar técnicos:", error);
+        }
+      }
 
-            tbody.innerHTML = '';
+      // Actualizar el select con técnicos
+      function actualizarSelectTecnicos(tecnicos) {
+        const select = document.getElementById("tecnico");
+        if (!select) return;
 
-            tickets.forEach(ticket => {
-                const fila = tbody.insertRow();
-                const prioridad = ticket.prioridad ?
-                    `<span class="badge badge-${ticket.prioridad}">${ticket.prioridad}</span>` : '-';
+        // Limpiar opciones excepto "Seleccionar"
+        while (select.options.length > 1) {
+          select.remove(1);
+        }
 
-                fila.innerHTML = `
+        // Agregar técnicos de la BD
+        tecnicos.forEach((tecnico) => {
+          const option = document.createElement("option");
+          option.value = tecnico.id;
+          option.textContent = tecnico.nombre || tecnico.username;
+          select.appendChild(option);
+        });
+      }
+
+      async function cargarTablaTickets() {
+        const tickets = await obtenerTickets();
+        const tbody = document.getElementById("tablaTickets");
+        if (!tbody) return;
+
+        tbody.innerHTML = "";
+
+        tickets.tickets.forEach((ticket) => {
+          const fila = tbody.insertRow();
+          const prioridad = ticket.prioridad
+            ? `<span class="badge badge-${ticket.prioridad}">${ticket.prioridad}</span>`
+            : "-";
+
+          fila.innerHTML = `
             <td>${ticket.id}</td>
-            <td>${ticket.asunto}</td>
+            <td class="celda-asunto">${ticket.asunto}</td>
             <td>${prioridad}</td>
             <td>${ticket.fecha}</td>
             <td>${ticket.estado}</td>
-            <td>${ticket.tecnico || '-'}</td>
+            <td>${ticket.tecnico || "-"}</td>
             <td>
-                <button class="btn-accion btn-ver" onclick="verTicket('${ticket.id}')">👁️</button>
-                <button class="btn-accion btn-editar" onclick="abrirModalAsignar('${ticket.id}')">✏️</button>
-                <button class="btn-accion btn-eliminar" onclick="eliminarTicket('${ticket.id}')">🗑️</button>
+                <button class="btn-accion btn-ver" onclick="verDetalles('${
+                  ticket.id
+                }')">👁️</button>
+                <button class="btn-accion btn-editar" onclick="abrirModalAsignar('${
+                  ticket.id
+                }')">✏️</button>
+                <button class="btn-accion btn-eliminar" onclick="eliminarTicket('${
+                  ticket.id
+                }')">🗑️</button>
             </td>
         `;
-            });
+        });
+      }
+
+      function abrirModalAsignar(id) {
+        ticketActual = id;
+        document.getElementById("ticketId").textContent = id;
+
+        // Cargar técnicos al abrir el modal (por si hay nuevos)
+        cargarTecnicos();
+
+        document.getElementById("modalAsignar").style.display = "flex";
+      }
+
+      function cerrarModal() {
+        document.getElementById("modalAsignar").style.display = "none";
+        ticketActual = null;
+      }
+
+      async function guardarAsignacion() {
+        const prioridad = document.getElementById("prioridad").value;
+        const tecnicoSelect = document.getElementById("tecnico");
+        const tecnicoId = tecnicoSelect.value;
+        const tecnicoNombre =
+          tecnicoSelect.options[tecnicoSelect.selectedIndex].text;
+
+        if (!prioridad || !tecnicoId) {
+          alert("Selecciona prioridad y técnico");
+          return;
+        }
+        const res = await fetch("/tickets/asignarTicket", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            prioridad,
+            ticket_id: Number(ticketActual),
+            tecnico_codigo: tecnicoId,
+          }),
+        });
+
+        const resp = await res.json();
+        if (resp.success) {
+          alert("Ticket asignado");
+        } else {
+          alert(resp.message);
         }
 
-        function abrirModalAsignar(id) {
-            ticketActual = id;
-            document.getElementById('ticketId').textContent = id;
-            document.getElementById('modalAsignar').style.display = 'flex';
+        cerrarModal();
+        cargarTablaTickets();
+      }
+
+      async function verDetalles(ticketId) {
+        try {
+          const response = await fetch(`/tickets/${ticketId}`);
+          const resultado = await response.json();
+
+          if (resultado.success) {
+            const ticket = resultado.ticket;
+            // Muestra todos los datos que recibas
+            let mensaje = `📋 Ticket: ${ticket.id}\n`;
+            mensaje += `📝 Asunto: ${ticket.asunto}\n`;
+
+            // Solo si existen estos campos
+            if (ticket.nombre_completo)
+              mensaje += `👤 Solicitante: ${ticket.nombre_completo}\n`;
+            if (ticket.departamento)
+              mensaje += `🏢 Departamento: ${ticket.departamento}\n`;
+
+            mensaje += `⚡ Prioridad: ${ticket.prioridad}\n`;
+            mensaje += `📅 Fecha: ${ticket.fecha}\n`;
+            mensaje += `🔄 Estado: ${ticket.estado}\n`;
+            if (ticket.tecnico) mensaje += `🔧 Técnico: ${ticket.tecnico}\n`;
+            if (ticket.descripcion)
+              mensaje += `📄 Descripción: ${ticket.descripcion}`;
+
+            alert(mensaje);
+          } else {
+            alert("Error: " + resultado.message);
+          }
+        } catch (error) {
+          console.error("Error:", error);
         }
+      }
 
-        function cerrarModal() {
-            document.getElementById('modalAsignar').style.display = 'none';
-            ticketActual = null;
-        }
+      async function eliminarTicket(id) {
+        if (!confirm("¿Eliminar ticket " + id + "?")) return;
+        try {
+          const res = await fetch('/tickets/eliminarTicket', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ticket_id: Number(id) })
+          });
 
-        function guardarAsignacion() {
-            const prioridad = document.getElementById('prioridad').value;
-            const tecnico = document.getElementById('tecnico').value;
-
-            if (!prioridad || !tecnico) {
-                alert('Selecciona prioridad y técnico');
-                return;
-            }
-
-            const ticket = tickets.find(t => t.id === ticketActual);
-            if (ticket) {
-                ticket.prioridad = prioridad;
-                ticket.tecnico = tecnico === '1' ? 'Juan Pérez' : 'María González';
-                if (ticket.estado === 'Abierto') ticket.estado = 'En proceso';
-            }
-
+          const resp = await res.json();
+          if (resp.success) {
+            alert('Ticket eliminado');
             cargarTablaTickets();
-            cerrarModal();
-            alert('Ticket asignado');
+          } else {
+            alert('Error: ' + (resp.message || 'No se pudo eliminar'));
+          }
+        } catch (error) {
+          console.error('Error al eliminar ticket:', error);
+          alert('Error al eliminar ticket');
         }
+      }
 
-        function verTicket(id) {
-            const ticket = tickets.find(t => t.id === id);
-            alert(`Ticket ${id}\nAsunto: ${ticket.asunto}\nEstado: ${ticket.estado}`);
-        }
+      async function obtenerTickets() {
+        const res = await fetch("/tickets/obtenerTicketsAdmin", {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        });
 
-        function eliminarTicket(id) {
-            if (confirm('¿Eliminar ticket ' + id + '?')) {
-                tickets = tickets.filter(t => t.id !== id);
-                cargarTablaTickets();
-            }
-        }
+        return res.json();
+      }
 
-        // Inicializar
-        if (document.getElementById('tablaTickets')) {
-            cargarTablaTickets();
-        }
 
-        // Cerrar modal al hacer clic fuera
-        window.onclick = function (event) {
-            const modal = document.getElementById('modalAsignar');
-            if (event.target === modal) {
-                cerrarModal();
-            }
+      async function obtenerUsuario(username) {
+        const res = await fetch("/usuarios/autenticar", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username }),
+        });
+
+        const result = await res.json();
+        const { usuario } = result;
+        return usuario;
+      }
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const username = urlParams.get('username');
+      let usuarioActual;
+
+      async function cargarDatosPantalla() {
+        usuarioActual = await obtenerUsuario(username);
+        const nombreElemento = document.getElementById("admin");
+        if (nombreElemento) {
+          nombreElemento.textContent = `Admin: ${usuarioActual?.nombre || 'Admin'}`;
         }
+        // Configurar botón Historial para conservar username en la query
+        const btnHist = document.getElementById('btnHistorial');
+        if (btnHist) {
+          if (username) btnHist.addEventListener('click', () => location.href = `vis_historial.html?username=${encodeURIComponent(username)}`);
+          else btnHist.addEventListener('click', () => location.href = 'vis_historial.html');
+        }
+        cargarTecnicos();
+        cargarTablaTickets();
+      }
+
+      // Inicializar
+      document.addEventListener("DOMContentLoaded", cargarDatosPantalla);
+
+      // Cerrar modal al hacer clic fuera
+      window.onclick = function (event) {
+        const modal = document.getElementById("modalAsignar");
+        if (event.target === modal) {
+          cerrarModal();
+        }
+      };
     </script>
-</body>
-
+  </body>
 </html>
