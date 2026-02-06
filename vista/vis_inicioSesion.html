@@ -32,12 +32,16 @@
         <div style="background: white; padding: 25px; border-radius: 8px; max-width: 400px; margin: 0 auto;">
             <form onsubmit="login(event)">
                 <label style="display: block; margin: 10px 0 5px; font-weight: bold;">Tu ID de usuario</label>
-                <input type="text" 
-                       id="username" 
-                       class="input-mppop" 
-                       placeholder="Ej: jua1234" 
-                       required
-                       style="letter-spacing: 1px;">
+                  <input type="text" 
+                      id="username" 
+                      class="input-mppop" 
+                      placeholder="Ej: jua1234" 
+                      required
+                      maxlength="7"
+                      pattern="[A-Za-z0-9]{7}"
+                      title="7 caracteres alfanuméricos"
+                      oninput="this.value = this.value.replace(/[^A-Za-z0-9]/g,'').slice(0,7)"
+                      style="letter-spacing: 1px;">
                 
                 <button type="submit" class="btn-principal">
                     Ingresar al sistema
@@ -50,12 +54,20 @@
         </div>
     </div>
 
+
     <script>
       
         async function login(event) {
             event.preventDefault();
-            const username = document.getElementById('username').value.toLowerCase();
-            
+            const usernameEl = document.getElementById('username');
+            const username = usernameEl.value.toLowerCase();
+            // Validar exactamente 7 caracteres alfanuméricos
+            const userRegex = /^[a-z0-9]{7}$/i;
+            if (!userRegex.test(username)) {
+                alert('El ID de usuario debe tener exactamente 7 caracteres.');
+                usernameEl.focus();
+                return;
+            }
             const res = await fetch("/usuarios/autenticar", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
@@ -80,7 +92,7 @@
         }
     }
     
-        // Enter para enviar
+        // Enter para enviar (login() hace la validación)
         document.getElementById('username').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 login(e);

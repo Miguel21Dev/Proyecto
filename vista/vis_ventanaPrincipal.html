@@ -82,6 +82,10 @@
 
             asuntoCount.textContent = `${asunto.length}/200`;
 
+            // Validación: nombre sólo letras y espacios; asunto permite algunos signos básicos
+            const nameOnlyRegex = /^[\p{L}\s]+$/u; // sólo letras (Unicode) y espacios
+            const safeTextRegex = /^[\p{L}\p{N}\s.,\-()]+$/u;
+
             if (asunto.length > 200) {
                 asuntoError.textContent = 'El asunto supera el límite de 200 caracteres.';
                 asuntoError.style.display = 'block';
@@ -91,8 +95,26 @@
                 asuntoError.style.display = 'none';
             }
 
-            if (!nombre || !departamento || !asunto) {
-                alert('Por favor complete todos los campos.');
+            if (!nombre) {
+                alert('El nombre es obligatorio.');
+                return;
+            }
+            if (!nameOnlyRegex.test(nombre)) {
+                alert('El nombre sólo debe contener letras y espacios.');
+                return;
+            }
+
+            if (!departamento) {
+                alert('Selecciona un departamento.');
+                return;
+            }
+
+            if (!asunto) {
+                alert('El asunto es obligatorio.');
+                return;
+            }
+            if (!safeTextRegex.test(asunto)) {
+                alert('El asunto contiene caracteres no permitidos. Evita símbolos especiales.');
                 return;
             }
 
@@ -103,10 +125,10 @@
                     body: JSON.stringify({nombre, departamento, asunto})
                 });
 
-                const result = await resp.json()
+                const result = await resp.json();
 
                 if (!resp.ok) {
-                    alert(result.message);
+                    alert(result.message || 'Error al crear ticket');
                     return;
                 }
 
@@ -114,7 +136,7 @@
                     alert(`Ticket creado exitosamente: ${result.ticket.id}`);
                     this.reset();
                 } else {
-                    alert(`Error:  ${data.message || 'No se pudo crear el ticket'}`);
+                    alert(`Error:  ${result.message || 'No se pudo crear el ticket'}`);
                 }
 
             } catch (err) {
