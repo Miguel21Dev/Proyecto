@@ -1,103 +1,128 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Login - MPPOP</title>
-    <link rel="stylesheet" href="css/comun.css">
+    <link rel="stylesheet" href="css/comun.css" />
     <style>
-        .info-ayuda {
-            background: #f0f7ff;
-            padding: 15px;
-            border-radius: 6px;
-            margin-top: 20px;
-            border-left: 4px solid #007BFF;
-            font-size: 14px;
-        }
+      .info-ayuda {
+        background: #f0f7ff;
+        padding: 15px;
+        border-radius: 6px;
+        margin-top: 20px;
+        border-left: 4px solid #007bff;
+        font-size: 14px;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <!-- BARRA SUPERIOR -->
     <header class="barra-mppop">
-        <img src="https://images.seeklogo.com/logo-png/53/1/mppop-logo-png_seeklogo-537041.png" 
-             alt="MPPOP" class="logo-mppop">
-        <button class="btn-superior" onclick="location.href='vis_ventanaPrincipal.html'">
-            ← Volver
-        </button>
+      <img
+        src="https://images.seeklogo.com/logo-png/53/1/mppop-logo-png_seeklogo-537041.png"
+        alt="MPPOP"
+        class="logo-mppop"
+      />
+      <button
+        title="Volver a la página principal de soporte"
+        class="btn-superior"
+        onclick="location.href = 'vis_ventanaPrincipal.html'"
+      >
+        ← Volver
+      </button>
     </header>
 
     <!-- LOGIN -->
     <div class="contenedor">
-        <h1 class="titulo-pagina">Iniciar Sesión</h1>
-        
-        <div style="background: white; padding: 25px; border-radius: 8px; max-width: 400px; margin: 0 auto;">
-            <form onsubmit="login(event)">
-                <label style="display: block; margin: 10px 0 5px; font-weight: bold;">Tu ID de usuario</label>
-                  <input type="text" 
-                      id="username" 
-                      class="input-mppop" 
-                      placeholder="Ej: jua1234" 
-                      required
-                      maxlength="7"
-                      pattern="[A-Za-z0-9]{7}"
-                      title="7 caracteres alfanuméricos"
-                      oninput="this.value = this.value.replace(/[^A-Za-z0-9]/g,'').slice(0,7)"
-                      style="letter-spacing: 1px;">
-                
-                <button type="submit" class="btn-principal">
-                    Ingresar al sistema
-                </button>
-            </form>
-            
-            <p style="text-align: center; margin-top: 20px;">
-                ¿No tienes usuario? <a href="vis_registro.html">Regístrate aquí</a>
-            </p>
-        </div>
+      <h1 class="titulo-pagina">Iniciar Sesión</h1>
+
+      <div
+        style="
+          background: white;
+          padding: 25px;
+          border-radius: 8px;
+          max-width: 400px;
+          margin: 0 auto;
+        "
+      >
+        <form onsubmit="login(event)">
+          <label style="display: block; margin: 10px 0 5px; font-weight: bold"
+            >Tu ID de usuario</label
+          >
+          <input
+            type="text"
+            id="username"
+            class="input-mppop"
+            placeholder="Ej: jua1234"
+            required
+            maxlength="7"
+            pattern="[A-Za-z0-9]{7}"
+            title="7 caracteres alfanuméricos"
+            oninput="
+              this.value = this.value.replace(/[^A-Za-z0-9]/g, '').slice(0, 7)
+            "
+            style="letter-spacing: 1px"
+          />
+
+          <button
+            title="Iniciar sesión con el ID de usuario"
+            type="submit"
+            class="btn-principal"
+          >
+            Ingresar al sistema
+          </button>
+        </form>
+
+        <p style="text-align: center; margin-top: 20px">
+          ¿No tienes usuario?
+          <a title="Registrarse" href="vis_registro.html">Regístrate aquí</a>
+        </p>
+      </div>
     </div>
 
-
     <script>
-      
-        async function login(event) {
-            event.preventDefault();
-            const usernameEl = document.getElementById('username');
-            const username = usernameEl.value.toLowerCase();
-            // Validar exactamente 7 caracteres alfanuméricos
-            const userRegex = /^[a-z0-9]{7}$/i;
-            if (!userRegex.test(username)) {
-                alert('El ID de usuario debe tener exactamente 7 caracteres.');
-                usernameEl.focus();
-                return;
-            }
-            const res = await fetch("/usuarios/autenticar", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({username: username}),
-                });
-
-            const result = await res.json()
-            const { usuario } = result
-            
-            
-        if (result.success && usuario) {
-            alert(`Bienvenido ${usuario.nombre}`);
-            
-            // Redirigir según rol
-            if (usuario.rol === 'admin') {
-                location.href = `vis_admin.html?username=${usuario.username}`;
-            } else if (usuario.rol === 'tecnico') {
-                location.href = `vis_tecnico.html?username=${usuario.username}`;
-            } 
-        } else {
-            alert(result.message || 'Usuario no encontrado');
+      async function login(event) {
+        event.preventDefault();
+        const usernameEl = document.getElementById("username");
+        const username = usernameEl.value.toLowerCase();
+        // Validar exactamente 7 caracteres alfanuméricos
+        const userRegex = /^[a-z0-9]{7}$/i;
+        if (!userRegex.test(username)) {
+          alert("El ID de usuario debe tener exactamente 7 caracteres.");
+          usernameEl.focus();
+          return;
         }
-    }
-    
-        // Enter para enviar (login() hace la validación)
-        document.getElementById('username').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                login(e);
-            }
+        const res = await fetch("/usuarios/autenticar", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: username }),
+        });
+
+        const result = await res.json();
+        const { usuario } = result;
+
+        if (result.success && usuario) {
+          alert(`Bienvenido ${usuario.nombre}`);
+
+          // Redirigir según rol
+          if (usuario.rol === "admin") {
+            location.href = `vis_admin.html?username=${usuario.username}`;
+          } else if (usuario.rol === "tecnico") {
+            location.href = `vis_tecnico.html?username=${usuario.username}`;
+          }
+        } else {
+          alert(result.message || "Usuario no encontrado");
+        }
+      }
+
+      // Enter para enviar (login() hace la validación)
+      document
+        .getElementById("username")
+        .addEventListener("keypress", function (e) {
+          if (e.key === "Enter") {
+            login(e);
+          }
         });
     </script>
-</body>
+  </body>
 </html>

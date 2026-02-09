@@ -14,7 +14,7 @@
         <div class="botones-superiores">
             <span style="padding: 8px 15px; color: #2C3E50; font-weight: bold;" id="nombreTecnico">
             </span>
-            <button class="btn-superior" onclick="location.href='vis_inicioSesion.html'">
+            <button title="Cerrar sesión" class="btn-superior" onclick="location.href='vis_inicioSesion.html'">
                 🚪 Cerrar Sesión
             </button>
         </div>
@@ -132,7 +132,7 @@
                 <td>${ticket.fecha}</td>
                 <td>${selectEstado}</td>
                 <td>
-                    <button class="btn-accion btn-ver" onclick="verDetalles('${ticketId}')">👁️</button>
+                    <button title="Ver detalles del ticket" class="btn-accion btn-ver" onclick="verDetalles('${ticketId}')">👁️</button>
                 </td>
             `;
         });

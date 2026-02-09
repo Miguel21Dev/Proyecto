@@ -23,10 +23,10 @@
           id="admin"
         >
         </span>
-        <button id="btnHistorial" class="btn-superior">
+        <button title="Volver al panel de Administrador" id="btnHistorial" class="btn-superior">
           ← Volver
         </button>
-        <button
+        <button title="Cierre de sesión"
           class="btn-superior"
           onclick="location.href = 'vis_inicioSesion.html'"
         >
@@ -41,7 +41,7 @@
 
       <div class="descarga-mppop" aria-hidden="false">
         <div id="descargaToggle" class="descarga-toggle">
-          <span class="icon">⬇️</span>
+          <span title="Descarga de Historial" class="icon">⬇️</span>
           Descargar
         </div>
         <div id="descargaMenu" class="descarga-menu" hidden>
@@ -61,8 +61,8 @@
             <option value="12">Diciembre</option>
           </select>
           <input id="añoHistorial" type="number" min="2000" max="2100" style="width:110px;" />
-          <button id="descargarPdf" class="btn-confirm btn-superior">PDF</button>
-          <button id="descargarExcel" class="btn-confirm btn-superior">Excel</button>
+          <button title="Decargar en formato PDF" id="descargarPdf" class="btn-confirm btn-superior">PDF</button>
+          <button title="Decargar en formato Excel" id="descargarExcel" class="btn-confirm btn-superior">Excel</button>
         </div>
       </div>
 
@@ -83,57 +83,6 @@
         </tbody>
       </table>
     </div>
-
-    <!-- MODAL (REUTILIZABLE) 
-    <div id="modalAsignar" class="modal-mppop">
-      <div class="modal-contenido">
-        <h3>Asignar Ticket</h3>
-        <p>ID: <span id="ticketId"></span></p>
-
-        <label>Prioridad:</label>
-        <select id="prioridad" class="select-mppop">
-          <option value="">Seleccionar</option>
-          <option value="alta">Alta</option>
-          <option value="media">Media</option>
-          <option value="baja">Baja</option>
-        </select>
-
-        <label for="tecnico">Técnico:</label>
-        <select id="tecnico" class="select-mppop" required>
-          <option value="">Seleccionar</option>
-          <!-- Las opciones se llenarán dinámicamente 
-        </select>
-
-        <div style="margin-top: 20px; text-align: right">
-          <button
-            onclick="guardarAsignacion()"
-            style="
-              background: #007bff;
-              color: white;
-              padding: 10px 20px;
-              border: none;
-              border-radius: 4px;
-              cursor: pointer;
-            "
-          >
-            Guardar
-          </button>
-          <button
-            onclick="cerrarModal()"
-            style="
-              background: #f5f5f5;
-              padding: 10px 20px;
-              border: 1px solid #ddd;
-              border-radius: 4px;
-              cursor: pointer;
-              margin-left: 10px;
-            "
-          >
-            Cancelar
-          </button>
-        </div>
-      </div>
-    </div> -->
 
     <script>
       async function cargarTablaTickets() {
@@ -167,7 +116,7 @@
             <td>${ticket.estado}</td>
             <td>${ticket.tecnico || "-"}</td>
             <td>
-                <button class="btn-accion btn-ver" onclick="verDetalles('${ticket.id}')">👁️</button>
+                <button title="Ver detalles del ticket" class="btn-accion btn-ver" onclick="verDetalles('${ticket.id}')">👁️</button>
             </td>
         `;
         });
@@ -206,9 +155,6 @@
           console.error("Error:", error);
         }
       }
-
-
-
 
       async function obtenerUsuario(username) {
         const res = await fetch("/usuarios/autenticar", {

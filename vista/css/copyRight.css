@@ -1,0 +1,60 @@
+.copyright-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    background-color: #2c3e50;
+    color: white;
+    padding: 12px 20px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    z-index: 1000;
+    border-top-right-radius: 6px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Símbolo de copyright */
+.copyright-symbol {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* Año del copyright */
+.copyright-year {
+    color: #ecf0f1;
+}
+
+/* Mensaje del copyright */
+.copyright-message {
+    display: flex;
+    flex-direction: column;
+    color: #bdc3c7;
+    font-size: 11px;
+}
+
+/* Estilos para hover (opcional) */
+.copyright-footer:hover {
+    background-color: #1a252f;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+    .copyright-footer {
+        width: 100%;
+        border-radius: 0;
+        justify-content: center;
+        padding: 10px 15px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .copyright-footer {
+        flex-direction: column;
+        text-align: center;
+        gap: 2px;
+        padding: 8px 10px;
+    }
+}

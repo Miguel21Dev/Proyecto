@@ -22,10 +22,15 @@
           id="admin"
         >
         </span>
-        <button id="btnHistorial" class="btn-superior">
+        <button
+          title="Ver historial de tickets"
+          id="btnHistorial"
+          class="btn-superior"
+        >
           📊 Historial
         </button>
         <button
+          title="Cierre de sesión"
           class="btn-superior"
           onclick="location.href = 'vis_inicioSesion.html'"
         >
@@ -164,13 +169,13 @@
             <td>${ticket.estado}</td>
             <td>${ticket.tecnico || "-"}</td>
             <td>
-                <button class="btn-accion btn-ver" onclick="verDetalles('${
+                <button title="Detalles del Ticket" class="btn-accion btn-ver" onclick="verDetalles('${
                   ticket.id
                 }')">👁️</button>
-                <button class="btn-accion btn-editar" onclick="abrirModalAsignar('${
+                <button title="Asignar técnico y prioridad del Ticket" class="btn-accion btn-editar" onclick="abrirModalAsignar('${
                   ticket.id
                 }')">✏️</button>
-                <button class="btn-accion btn-eliminar" onclick="eliminarTicket('${
+                <button title="Eliminar Ticket" class="btn-accion btn-eliminar" onclick="eliminarTicket('${
                   ticket.id
                 }')">🗑️</button>
             </td>
@@ -261,22 +266,22 @@
       async function eliminarTicket(id) {
         if (!confirm("¿Eliminar ticket " + id + "?")) return;
         try {
-          const res = await fetch('/tickets/eliminarTicket', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ticket_id: Number(id) })
+          const res = await fetch("/tickets/eliminarTicket", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ticket_id: Number(id) }),
           });
 
           const resp = await res.json();
           if (resp.success) {
-            alert('Ticket eliminado');
+            alert("Ticket eliminado");
             cargarTablaTickets();
           } else {
-            alert('Error: ' + (resp.message || 'No se pudo eliminar'));
+            alert("Error: " + (resp.message || "No se pudo eliminar"));
           }
         } catch (error) {
-          console.error('Error al eliminar ticket:', error);
-          alert('Error al eliminar ticket');
+          console.error("Error al eliminar ticket:", error);
+          alert("Error al eliminar ticket");
         }
       }
 
@@ -288,7 +293,6 @@
 
         return res.json();
       }
-
 
       async function obtenerUsuario(username) {
         const res = await fetch("/usuarios/autenticar", {
@@ -303,20 +307,29 @@
       }
 
       const urlParams = new URLSearchParams(window.location.search);
-      const username = urlParams.get('username');
+      const username = urlParams.get("username");
       let usuarioActual;
 
       async function cargarDatosPantalla() {
         usuarioActual = await obtenerUsuario(username);
         const nombreElemento = document.getElementById("admin");
         if (nombreElemento) {
-          nombreElemento.textContent = `Admin: ${usuarioActual?.nombre || 'Admin'}`;
+          nombreElemento.textContent = `Admin: ${usuarioActual?.nombre || "Admin"}`;
         }
         // Configurar botón Historial para conservar username en la query
-        const btnHist = document.getElementById('btnHistorial');
+        const btnHist = document.getElementById("btnHistorial");
         if (btnHist) {
-          if (username) btnHist.addEventListener('click', () => location.href = `vis_historial.html?username=${encodeURIComponent(username)}`);
-          else btnHist.addEventListener('click', () => location.href = 'vis_historial.html');
+          if (username)
+            btnHist.addEventListener(
+              "click",
+              () =>
+                (location.href = `vis_historial.html?username=${encodeURIComponent(username)}`),
+            );
+          else
+            btnHist.addEventListener(
+              "click",
+              () => (location.href = "vis_historial.html"),
+            );
         }
         cargarTecnicos();
         cargarTablaTickets();
