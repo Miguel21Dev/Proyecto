@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="css/comun.css" />
     <!-- CSS adicional solo para registro -->
     <link rel="stylesheet" href="css/registro.css" />
+    <link rel="stylesheet" href="css/copyRight.css" />
+    <link rel="icon" type="image/png" sizes="32x32" href="./icon/Favicon.png" />
   </head>
 
   <body>
@@ -47,6 +49,7 @@
           <div class="grupo-formulario">
             <label for="name">Nombre completo *</label>
             <input
+              maxlength="80"
               type="text"
               id="name"
               class="input-mppop"
@@ -82,6 +85,7 @@
           <div class="grupo-formulario">
             <label for="authCode">Código de autenticación *</label>
             <input
+              maxlength="10"
               type="text"
               id="authCode"
               class="input-mppop"
@@ -147,6 +151,31 @@
         </div>
       </div>
     </div>
+
+    <!-- Copyright fijo en esquina inferior izquierda -->
+    <div class="copyright-footer">
+      <span class="copyright-symbol">&copy;</span>
+      <span class="copyright-year">2026</span>
+      <div class="copyright-message">
+        <span
+          >Sistema diseñado y desarrollado por Neyla Mahmoudi, Miguel Peña y
+          Gabriela Acosta</span
+        >
+        <span
+          >Estudiantes de la Universidad Nacional Experimental de la Gran
+          Caracas</span
+        >
+      </div>
+    </div>
+
+    <script>
+      // Actualizar año automáticamente
+      document.addEventListener("DOMContentLoaded", function () {
+        const yearElement = document.querySelector(".copyright-year");
+        const currentYear = new Date().getFullYear();
+        yearElement.textContent = currentYear;
+      });
+    </script>
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {

@@ -6,6 +6,8 @@
     <!-- SOLO ESTE CSS PARA TODAS LAS VISTAS -->
     <link rel="stylesheet" href="css/comun.css" />
       <link rel="stylesheet" href="css/descarga.css" />
+      <link rel="stylesheet" href="css/copyRight.css" />
+      <link rel="icon" type="image/png" sizes="32x32" href="./icon/Favicon.png">
   </head>
 
   <body>
@@ -83,6 +85,31 @@
         </tbody>
       </table>
     </div>
+
+        <!-- Copyright fijo en esquina inferior izquierda -->
+    <div class="copyright-footer">
+      <span class="copyright-symbol">&copy;</span>
+      <span class="copyright-year">2026</span>
+      <div class="copyright-message">
+        <span
+          >Sistema diseñado y desarrollado por Neyla Mahmoudi, Miguel Peña y
+          Gabriela Acosta</span
+        >
+        <span
+          >Estudiantes de la Universidad Nacional Experimental de la Gran
+          Caracas</span
+        >
+      </div>
+    </div>
+
+    <script>
+      // Actualizar año automáticamente
+      document.addEventListener("DOMContentLoaded", function () {
+        const yearElement = document.querySelector(".copyright-year");
+        const currentYear = new Date().getFullYear();
+        yearElement.textContent = currentYear;
+      });
+    </script>
 
     <script>
       async function cargarTablaTickets() {

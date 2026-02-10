@@ -1,131 +1,165 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Técnico - MPPOP</title>
-    <link rel="stylesheet" href="css/comun.css">
-</head>
+    <link rel="stylesheet" href="css/comun.css" />
+    <link rel="stylesheet" href="css/copyRight.css" />
+    <link rel="icon" type="image/png" sizes="32x32" href="./icon/Favicon.png" />
+  </head>
 
-<body>
-    <header class="barra-mppop">  
-        <img src="https://images.seeklogo.com/logo-png/53/1/mppop-logo-png_seeklogo-537041.png" alt="MPPOP"
-            class="logo-mppop">
-        <div class="botones-superiores">
-            <span style="padding: 8px 15px; color: #2C3E50; font-weight: bold;" id="nombreTecnico">
-            </span>
-            <button title="Cerrar sesión" class="btn-superior" onclick="location.href='vis_inicioSesion.html'">
-                🚪 Cerrar Sesión
-            </button>
-        </div>
+  <body>
+    <header class="barra-mppop">
+      <img
+        src="https://images.seeklogo.com/logo-png/53/1/mppop-logo-png_seeklogo-537041.png"
+        alt="MPPOP"
+        class="logo-mppop"
+      />
+      <div class="botones-superiores">
+        <span
+          style="padding: 8px 15px; color: #2c3e50; font-weight: bold"
+          id="nombreTecnico"
+        >
+        </span>
+        <button
+          title="Cerrar sesión"
+          class="btn-superior"
+          onclick="location.href = 'vis_inicioSesion.html'"
+        >
+          🚪 Cerrar Sesión
+        </button>
+      </div>
     </header>
 
     <div class="contenedor">
-        <h1 class="titulo-pagina">Mis Tickets Asignados</h1>
+      <h1 class="titulo-pagina">Mis Tickets Asignados</h1>
 
-        <table class="tabla-mppop">
-            <thead>
-                <tr>
-                    <th>ID Ticket</th>
-                    <th>Asunto</th>
-                    <th>Prioridad</th>
-                    <th>Fecha</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody id="tablaTicketsTecnico">
-                <!-- JavaScript llena esto -->
-            </tbody>
-        </table>
+      <table class="tabla-mppop">
+        <thead>
+          <tr>
+            <th>ID Ticket</th>
+            <th>Asunto</th>
+            <th>Prioridad</th>
+            <th>Fecha</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tablaTicketsTecnico">
+          <!-- JavaScript llena esto -->
+        </tbody>
+      </table>
     </div>
 
-<script>
-    // Obtener username de la URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const username = urlParams.get('username');
-    
-    if (!username) {
-        alert('No se encontró información de usuario. Redirigiendo...');
-        window.location.href = 'vis_inicioSesion.html';
-    }
-    
-    let ticketsTecnico = [];
-    let usuarioActual;
+    <!-- Copyright fijo en esquina inferior izquierda -->
+    <div class="copyright-footer">
+      <span class="copyright-symbol">&copy;</span>
+      <span class="copyright-year">2026</span>
+      <div class="copyright-message">
+        <span
+          >Sistema diseñado y desarrollado por Neyla Mahmoudi, Miguel Peña y
+          Gabriela Acosta</span
+        >
+        <span
+          >Estudiantes de la Universidad Nacional Experimental de la Gran
+          Caracas</span
+        >
+      </div>
+    </div>
 
+    <script>
+      // Actualizar año automáticamente
+      document.addEventListener("DOMContentLoaded", function () {
+        const yearElement = document.querySelector(".copyright-year");
+        const currentYear = new Date().getFullYear();
+        yearElement.textContent = currentYear;
+      });
+    </script>
 
-   
-    document.addEventListener('DOMContentLoaded', cargarDatosPantalla);
+    <script>
+      // Obtener username de la URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const username = urlParams.get("username");
 
-    async function cargarDatosPantalla(){
-        usuarioActual = await obtenerUsuario(username)
-           const nombreElemento = document.getElementById('nombreTecnico');
+      if (!username) {
+        alert("No se encontró información de usuario. Redirigiendo...");
+        window.location.href = "vis_inicioSesion.html";
+      }
+
+      let ticketsTecnico = [];
+      let usuarioActual;
+
+      document.addEventListener("DOMContentLoaded", cargarDatosPantalla);
+
+      async function cargarDatosPantalla() {
+        usuarioActual = await obtenerUsuario(username);
+        const nombreElemento = document.getElementById("nombreTecnico");
         if (nombreElemento) {
-            nombreElemento.textContent = `Técnico: ${usuarioActual.nombre}`;
+          nombreElemento.textContent = `Técnico: ${usuarioActual.nombre}`;
         }
         cargarTicketsTecnico();
-    }
+      }
 
-     async function obtenerUsuario(username) {
+      async function obtenerUsuario(username) {
         const res = await fetch("/usuarios/autenticar", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },                        
-                    body: JSON.stringify({username}),
-                });
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username }),
+        });
 
-        const result = await res.json()
-        const { usuario } = result
-        return usuario
-    }
+        const result = await res.json();
+        const { usuario } = result;
+        return usuario;
+      }
 
-    async function cargarTicketsTecnico() {
-        const tbody = document.getElementById('tablaTicketsTecnico');
+      async function cargarTicketsTecnico() {
+        const tbody = document.getElementById("tablaTicketsTecnico");
         if (!tbody) return;
 
         try {
-            const response = await fetch(`/tickets/tecnico/${usuarioActual.id}`);
-            const resultado = await response.json();
+          const response = await fetch(`/tickets/tecnico/${usuarioActual.id}`);
+          const resultado = await response.json();
 
-            if (resultado.success) {
-                ticketsTecnico = resultado.tickets || resultado.data || [];
-                actualizarTablaTecnico();
-            }
+          if (resultado.success) {
+            ticketsTecnico = resultado.tickets || resultado.data || [];
+            actualizarTablaTecnico();
+          }
         } catch (error) {
-            console.error('Error:', error);
+          console.error("Error:", error);
         }
-    }
+      }
 
-    function actualizarTablaTecnico() {
-        const tbody = document.getElementById('tablaTicketsTecnico');
+      function actualizarTablaTecnico() {
+        const tbody = document.getElementById("tablaTicketsTecnico");
         if (!tbody) return;
 
-        tbody.innerHTML = '';
+        tbody.innerHTML = "";
 
         if (ticketsTecnico.length === 0) {
-            tbody.innerHTML = `
+          tbody.innerHTML = `
                 <tr>
                     <td colspan="6" style="text-align: center; padding: 20px;">
                         No hay tickets asignados
                     </td>
                 </tr>
             `;
-            return;
+          return;
         }
 
-        ticketsTecnico.forEach(ticket => {
-            const fila = tbody.insertRow();
-            const ticketId = ticket.id || ticket.ticket_id;
+        ticketsTecnico.forEach((ticket) => {
+          const fila = tbody.insertRow();
+          const ticketId = ticket.id || ticket.ticket_id;
 
-            const selectEstado = `
+          const selectEstado = `
                 <select class="select-mppop select-estado" 
                         onchange="cambiarEstado('${ticketId}', this.value)">
-                    <option value="activo" ${ticket.estado === 'activo' ? 'selected' : ''}>Activo</option>
-                    <option value="en proceso" ${ticket.estado === 'en proceso' ? 'selected' : ''}>En proceso</option>
-                    <option value="finalizado" ${ticket.estado === 'finalizado' ? 'selected' : ''}>Finalizado</option>
+                    <option value="activo" ${ticket.estado === "activo" ? "selected" : ""}>Activo</option>
+                    <option value="en proceso" ${ticket.estado === "en proceso" ? "selected" : ""}>En proceso</option>
+                    <option value="finalizado" ${ticket.estado === "finalizado" ? "selected" : ""}>Finalizado</option>
                 </select>
             `;
 
-            fila.innerHTML = `
+          fila.innerHTML = `
                 <td>${ticketId}</td>
                 <td class="celda-asunto">${ticket.asunto}</td>
                 <td><span class="badge badge-${ticket.prioridad}">${ticket.prioridad}</span></td>
@@ -136,61 +170,67 @@
                 </td>
             `;
         });
-    }
+      }
 
-    async function cambiarEstado(ticketId, nuevoEstado) {
+      async function cambiarEstado(ticketId, nuevoEstado) {
         try {
-            const response = await fetch(`/tickets/${ticketId}/estado`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ estado: nuevoEstado, userId: usuarioActual.id })
-            });
+          const response = await fetch(`/tickets/${ticketId}/estado`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              estado: nuevoEstado,
+              userId: usuarioActual.id,
+            }),
+          });
 
-            const resultado = await response.json();
+          const resultado = await response.json();
 
-            if (resultado.success) {
-                const ticket = ticketsTecnico.find(t => t.id === ticketId || t.ticket_id === ticketId);
-                if (ticket) ticket.estado = nuevoEstado;
-                if (nuevoEstado === 'Finalizado') cargarTicketsTecnico();
-            } else {
-                alert('Error: ' + resultado.message);
-            }
+          if (resultado.success) {
+            const ticket = ticketsTecnico.find(
+              (t) => t.id === ticketId || t.ticket_id === ticketId,
+            );
+            if (ticket) ticket.estado = nuevoEstado;
+            if (nuevoEstado === "Finalizado") cargarTicketsTecnico();
+          } else {
+            alert("Error: " + resultado.message);
+          }
         } catch (error) {
-            console.error('Error:', error);
+          console.error("Error:", error);
         }
-    }
+      }
 
+      async function verDetalles(ticketId) {
+        try {
+          const response = await fetch(`/tickets/${ticketId}`);
+          const resultado = await response.json();
 
-    async function verDetalles(ticketId) {
-    try {
-        const response = await fetch(`/tickets/${ticketId}`);
-        const resultado = await response.json();
-
-        if (resultado.success) {
+          if (resultado.success) {
             const ticket = resultado.ticket;
             // Muestra todos los datos que recibas
             let mensaje = `📋 Ticket: ${ticket.id}\n`;
             mensaje += `📝 Asunto: ${ticket.asunto}\n`;
-            
+
             // Solo si existen estos campos
-            if (ticket.nombre_completo) mensaje += `👤 Solicitante: ${ticket.nombre_completo}\n`;
-            if (ticket.departamento) mensaje += `🏢 Departamento: ${ticket.departamento}\n`;
-            
+            if (ticket.nombre_completo)
+              mensaje += `👤 Solicitante: ${ticket.nombre_completo}\n`;
+            if (ticket.departamento)
+              mensaje += `🏢 Departamento: ${ticket.departamento}\n`;
+
             mensaje += `⚡ Prioridad: ${ticket.prioridad}\n`;
             mensaje += `📅 Fecha: ${ticket.fecha}\n`;
             mensaje += `🔄 Estado: ${ticket.estado}\n`;
             if (ticket.tecnico) mensaje += `🔧 Técnico: ${ticket.tecnico}\n`;
-            if (ticket.descripcion) mensaje += `📄 Descripción: ${ticket.descripcion}`;
-            
-            alert(mensaje);
-        } else {
-            alert('Error: ' + resultado.message);
-        }
-    } catch (error) {
-        console.error('Error:', error);
-    }
-}
-</script>
-</body>
+            if (ticket.descripcion)
+              mensaje += `📄 Descripción: ${ticket.descripcion}`;
 
+            alert(mensaje);
+          } else {
+            alert("Error: " + resultado.message);
+          }
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      }
+    </script>
+  </body>
 </html>
